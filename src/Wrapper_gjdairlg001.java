@@ -38,19 +38,19 @@ public class Wrapper_gjdairlg001 implements QunarCrawler {
 		FlightSearchParam searchParam = new FlightSearchParam();
 		// searchParam.setDep("BCN");
 		// searchParam.setArr("LUX");
-//		searchParam.setDep("BIO"); // Bilbao
-//		searchParam.setArr("LUX");
+		// searchParam.setDep("BIO"); // Bilbao
+		// searchParam.setArr("LUX");
 		// searchParam.setDep("TXL"); // Luxair
 		// searchParam.setArr("LUX");
-		searchParam.setDep("BRI");
+		searchParam.setDep("AJA");
 		searchParam.setArr("LUX");
-		searchParam.setDepDate("2014-06-11");
-//		searchParam.setDep("LUX");
-//		searchParam.setArr("BRI");
-//		searchParam.setDepDate("2014-07-06");
-//		searchParam.setDep("LUX");
-//		searchParam.setArr("FLR");
-//		searchParam.setDepDate("2014-06-10");
+		searchParam.setDepDate("2014-07-01");
+		// searchParam.setDep("LUX");
+		// searchParam.setArr("BRI");
+		// searchParam.setDepDate("2014-07-06");
+		// searchParam.setDep("LUX");
+		// searchParam.setArr("FLR");
+		// searchParam.setDepDate("2014-06-10");
 		searchParam.setWrapperid("gjdairlg001");
 		searchParam.setTimeOut("60000");
 		searchParam.setToken("");
@@ -84,8 +84,8 @@ public class Wrapper_gjdairlg001 implements QunarCrawler {
 						arg0.getDep(), arg0.getArr(), arg0.getDepDate().replaceAll("-", ""), arg0.getDepDate()
 								.replaceAll("-", ""));
 		map.put("lap", lap);
-//		map.put("lgBookButton", "Book Now");
-//		map.put("Referer", "https://www.luxair.lu/cms/page?p=en,17652,,,,,");
+		// map.put("lgBookButton", "Book Now");
+		// map.put("Referer", "https://www.luxair.lu/cms/page?p=en,17652,,,,,");
 		bookingInfo.setInputs(map);
 		bookingResult.setData(bookingInfo);
 		bookingResult.setRet(true);
@@ -181,7 +181,6 @@ public class Wrapper_gjdairlg001 implements QunarCrawler {
 	@Override
 	public ProcessResultInfo process(String arg0, FlightSearchParam arg1) {
 		String html = arg0;
-System.out.println(html);		
 		/*
 		 * ProcessResultInfo中，
 		 * ret为true时，status可以为：SUCCESS(抓取到机票价格)|NO_RESULT(无结果，没有可卖的机票)
@@ -197,17 +196,16 @@ System.out.println(html);
 		}
 
 		List<OneWayFlightInfo> flightList = new ArrayList<OneWayFlightInfo>(); // 获得具体航班信息
-//		System.out.println(html);
 		String jsonStr = StringUtils.substringBetween(html, "list_flight\":", "}],\"list_recommendation\"");
 		String jsonPrice = StringUtils.substringBetween(html, "list_recommendation\":", ",\"list_date\"");
-		if(StringUtils.isEmpty(jsonStr) || StringUtils.isEmpty(jsonPrice)){
+		if (StringUtils.isEmpty(jsonStr) || StringUtils.isEmpty(jsonPrice)) {
 			result.setRet(false);
-			result.setStatus(Constants.PARSING_FAIL);
+			result.setStatus(Constants.NO_RESULT);
 			return result;
 		}
 		JSONArray ajson = JSON.parseArray(jsonStr);
-		JSONArray ajsonPrice = JSON.parseArray(jsonPrice);  //价格json
-		Map<String,Double>  priceMap = new HashMap<String,Double>();//取各个flight_id的最小price
+		JSONArray ajsonPrice = JSON.parseArray(jsonPrice); // 价格json
+		Map<String, Double> priceMap = new HashMap<String, Double>();// 取各个flight_id的最小price
 		double price = 0;
 		for (int t = 0; t < ajsonPrice.size(); t++) {
 			JSONObject jsonObject = ajsonPrice.getJSONObject(t);
@@ -219,18 +217,18 @@ System.out.println(html);
 				for (int k = 0; k < flightArray.size(); k++) {
 					JSONObject flightObject = (JSONObject) flightArray.get(k);
 					String flight_id = flightObject.getString("flight_id");
-					if(priceMap.containsKey(flight_id)){
+					if (priceMap.containsKey(flight_id)) {
 						double tmpPrice = priceMap.get(flight_id);
 						if (tmpPrice > price) {
 							priceMap.put(flight_id, price);
 						}
-					}else{
+					} else {
 						priceMap.put(flight_id, price);
 					}
 				}
 			}
 		}
-		
+
 		for (int i = 0; i < ajson.size(); i++) {
 			OneWayFlightInfo baseFlight = new OneWayFlightInfo();
 			List<FlightSegement> segs = new ArrayList<FlightSegement>();

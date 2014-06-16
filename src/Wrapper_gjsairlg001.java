@@ -39,16 +39,14 @@ public class Wrapper_gjsairlg001 implements QunarCrawler {
 	public static void main(String[] args) {
 
 		FlightSearchParam searchParam = new FlightSearchParam();
+		// SCN-BER 2014-07-16 2014-07-26
+		// ADB-LUX 2014-07-26 2014-07-30
+		// LUX-FOC 2014-08-20 2014-08-24
 		searchParam.setDep("LUX");
-		searchParam.setArr("AJA");
-		searchParam.setDepDate("2014-07-05");
-		searchParam.setRetDate("2014-08-30");
+		searchParam.setArr("FCO");
+		searchParam.setDepDate("2014-08-20");
+		searchParam.setRetDate("2014-08-24");
 		searchParam.setWrapperid("gjsairlg001");
-		// searchParam.setDep("LUX");
-		// searchParam.setArr("BRI");
-		// searchParam.setDepDate("2014-07-06");
-		// searchParam.setRetDate("2014-07-12");
-		// searchParam.setWrapperid("gjsairlg001");
 		searchParam.setTimeOut("60000");
 		searchParam.setToken("");
 
@@ -57,14 +55,7 @@ public class Wrapper_gjsairlg001 implements QunarCrawler {
 		result = new Wrapper_gjsairlg001().process(html, searchParam);
 		if (result.isRet() && result.getStatus().equals(Constants.SUCCESS)) {
 			List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
-			System.out.println("RoundTripFlightInfo.size()  " + flightList.size());
 			for (RoundTripFlightInfo in : flightList) {
-				System.out.println(in.getOutboundPrice());
-				System.out.println(in.getReturnedPrice());
-				System.out.println(in.getRetdepdate());
-				System.out.println(in.getRetflightno());
-				System.out.println(in.getRetinfo().toString());
-				// System.out.println("************");
 				System.out.println("************" + in.getInfo().toString());
 				System.out.println("++++++++++++" + in.getDetail().toString());
 			}
@@ -192,7 +183,7 @@ public class Wrapper_gjsairlg001 implements QunarCrawler {
 
 		if (StringUtils.isEmpty(jsonStr) || StringUtils.isEmpty(jsonPrice)) {
 			result.setRet(false);
-			result.setStatus(Constants.PARSING_FAIL);
+			result.setStatus(Constants.NO_RESULT);
 			return result;
 		}
 		JSONArray ajson = JSON.parseArray(jsonStr);
