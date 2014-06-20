@@ -320,8 +320,11 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 						FlightSegement fs = segs.get(i - 1);
 						fs.setArrairport(arrPort[i]);
 						fs.setArrtime(get24Time(arrTime[i])); // arrTime
-						fs.setArrDate(arriveDate[i].substring(arriveDate[i].length() - 4) + "-"
-								+ month2No(arriveDate[i].substring(2, 5)) + "-" + arriveDate[i].substring(0, 2));
+
+						arriveDate[i] = arriveDate[i].substring(3);
+						String arrDate = arriveDate[i].substring(arriveDate[i].length() - 4) + "-"
+								+ month2No(arriveDate[i].substring(2, 5)) + "-" + arriveDate[i].substring(0, 2);
+						fs.setArrDate(arrDate); // arriveDate
 						segs.subList(0, segs.size() - 1);
 						segs.add(fs);
 						continue;
