@@ -70,19 +70,45 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
-		String bookingUrlPre = "https://www.luxair.lu/cms/luxair.php";
+		String bookingUrlPre = "http://book.liat.com/Select.aspx";
 		BookingResult bookingResult = new BookingResult();
 
 		BookingInfo bookingInfo = new BookingInfo();
 		bookingInfo.setAction(bookingUrlPre);
-		bookingInfo.setMethod("get");
+		bookingInfo.setMethod("post");
+		// 获取年月日
+		String[] dates = arg0.getDepDate().split("-");
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("p", "EN,17958,,,,,");
-		String lap = String
-				.format("PRD,en,1,ECONOMY_BUSINESS_LASTMINUTE,%s,%s,%s,%s,false,O,1,0,0,0,WWW_LUXAIR_LU,true,true,true,false,false,true,,,",
-						arg0.getDep(), arg0.getArr(), arg0.getDepDate().replaceAll("-", ""), arg0.getDepDate()
-								.replaceAll("-", ""));
-		map.put("lap", lap);
+		map.put("AvailabilitySearchInputSelectView$ButtonSubmit", "");
+		map.put("AvailabilitySearchInputSelectView$DropDownListMarketDateRange1", "0|0");
+		map.put("AvailabilitySearchInputSelectView$DropDownListMarketDateRange2", "0|0");
+		map.put("AvailabilitySearchInputSelectView$DropDownListMarketDay1", dates[2]);
+		map.put("AvailabilitySearchInputSelectView$DropDownListMarketDay2", dates[2]);
+		map.put("AvailabilitySearchInputSelectView$DropDownListMarketMonth1", dates[0] + "-" + dates[1]);
+		map.put("AvailabilitySearchInputSelectView$DropDownListMarketMonth2", dates[0] + "-" + dates[1]);
+		map.put("AvailabilitySearchInputSelectView$DropDownListPassengerType_ADS", "0");
+		map.put("AvailabilitySearchInputSelectView$DropDownListPassengerType_ADT", "1");
+		map.put("AvailabilitySearchInputSelectView$DropDownListPassengerType_CHD", "0");
+		map.put("AvailabilitySearchInputSelectView$RadioButtonMarketStructure", "OneWay");
+		map.put("AvailabilitySearchInputSelectView$TextBoxMarketDestination1", arg0.getArr());
+		map.put("AvailabilitySearchInputSelectView$TextBoxMarketOrigin1", arg0.getDep());
+		map.put("AvailabilitySearchInputSelectView$TextBoxMarketDestination2", "");
+		map.put("AvailabilitySearchInputSelectView$TextBoxMarketOrigin2", "");
+		map.put("AvailabilitySearchInputSelectView$promocode", "");
+		map.put("ControlGroupPriceAndConverterSelectView$CurrConvertSelectViewAjax$DropDownListConvCurr", "");
+		map.put("ControlGroupSelectView$AvailabilityInputSelectView$market1", "");
+		map.put("__EVENTARGUMENT", "");
+		map.put("__EVENTTARGET", "");
+		map.put("__VIEWSTATE", "/wEPDwUBMGRkbUFOpZl3yd/NgMo6CxihRbceiZ4=");
+		map.put("date_picker", arg0.getDepDate());
+		map.put("date_picker", arg0.getDepDate());
+		map.put("destinationStation1", arg0.getArr());
+		map.put("destinationStation2", "");
+		map.put("originStation1", "arg0.getDep()");
+		map.put("originStation2", "");
+		map.put("pageToken", "");
+		map.put("query", "Search");
+
 		bookingInfo.setInputs(map);
 		bookingResult.setData(bookingInfo);
 		bookingResult.setRet(true);
