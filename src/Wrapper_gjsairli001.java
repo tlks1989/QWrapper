@@ -30,8 +30,6 @@ import com.qunar.qfwrapper.interfaces.QunarCrawler;
 import com.qunar.qfwrapper.util.QFHttpClient;
 import com.qunar.qfwrapper.util.QFPostMethod;
 
-import demo.zongbo03.Helper;
-
 public class Wrapper_gjsairli001 implements QunarCrawler {
 
 	// 无票
@@ -236,15 +234,15 @@ public class Wrapper_gjsairli001 implements QunarCrawler {
 
 					RoundTripFlightInfo roundInfo = new RoundTripFlightInfo();
 
-					FlightDetail detail = Helper.cloneDetail(out.getDetail());
+					FlightDetail detail = cloneDetail(out.getDetail());
 					detail.setPrice(detail.getPrice() + in.getDetail().getPrice());// 价格为来往的总价格
 
 					roundInfo.setDetail(detail);// detail
-					roundInfo.setInfo(Helper.cloneFlightSegementList(out.getInfo()));// 去程航班段
+					roundInfo.setInfo(cloneFlightSegementList(out.getInfo()));// 去程航班段
 					roundInfo.setOutboundPrice(out.getDetail().getPrice());// 去程价格
 					roundInfo.setRetdepdate(in.getDetail().getDepdate());// 返程日期
 					roundInfo.setRetflightno(in.getDetail().getFlightno()); // 返程航班号
-					roundInfo.setRetinfo(Helper.cloneFlightSegementList(in.getInfo()));// 返程航班段
+					roundInfo.setRetinfo(cloneFlightSegementList(in.getInfo()));// 返程航班段
 					roundInfo.setReturnedPrice(in.getDetail().getPrice());// 返程价格
 
 					roundList.add(roundInfo);
@@ -444,7 +442,7 @@ public class Wrapper_gjsairli001 implements QunarCrawler {
 	 * 
 	 * @param format-日期字符串的格式
 	 */
-	public static Date getDateByFormat(String date, String formatStr) throws ParseException {
+	public Date getDateByFormat(String date, String formatStr) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat(formatStr);
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return StringUtils.isBlank(date) ? null : format.parse(date);
@@ -483,6 +481,49 @@ public class Wrapper_gjsairli001 implements QunarCrawler {
 		// 删除第一个无效的内容
 		return (String[]) ArrayUtils.remove(flightList, 0);
 
+	}
+
+	/**
+	 * 克隆FlightDetail
+	 * 
+	 * @param oldDetail
+	 * @return
+	 */
+	public static FlightDetail cloneDetail(FlightDetail oldDetail) {
+		FlightDetail detail = new FlightDetail();
+		detail.setArrcity(oldDetail.getArrcity());
+		detail.setDepcity(oldDetail.getDepcity());
+		detail.setDepdate(oldDetail.getDepdate());
+		detail.setFlightno(oldDetail.getFlightno());
+		detail.setMonetaryunit(oldDetail.getMonetaryunit());
+		detail.setTax(oldDetail.getTax());
+		detail.setPrice(oldDetail.getPrice());
+		detail.setWrapperid(oldDetail.getWrapperid());
+
+		return detail;
+	}
+
+	/**
+	 * 克隆 List<FlightSegement>
+	 * 
+	 * @param segs
+	 * @return
+	 */
+	public static List<FlightSegement> cloneFlightSegementList(List<FlightSegement> segs) {
+
+		List<FlightSegement> segList = new ArrayList<FlightSegement>();
+		for (FlightSegement seg : segs) {
+			FlightSegement s = new FlightSegement();
+			s.setDepairport(seg.getDepairport());
+			s.setDepDate(seg.getDepDate());
+			s.setDeptime(seg.getDeptime());
+			s.setArrairport(seg.getArrairport());
+			s.setArrDate(seg.getArrDate());
+			s.setArrtime(seg.getArrtime());
+			s.setFlightno(seg.getFlightno());
+			segList.add(s);
+		}
+		return segList;
 	}
 
 	/**
