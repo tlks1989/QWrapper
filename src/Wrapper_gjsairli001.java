@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,12 +24,16 @@ import com.qunar.qfwrapper.bean.search.FlightSearchParam;
 import com.qunar.qfwrapper.bean.search.FlightSegement;
 import com.qunar.qfwrapper.bean.search.OneWayFlightInfo;
 import com.qunar.qfwrapper.bean.search.ProcessResultInfo;
+import com.qunar.qfwrapper.bean.search.RoundTripFlightInfo;
 import com.qunar.qfwrapper.constants.Constants;
 import com.qunar.qfwrapper.interfaces.QunarCrawler;
 import com.qunar.qfwrapper.util.QFHttpClient;
 import com.qunar.qfwrapper.util.QFPostMethod;
 
-public class Wrapper_gjdairli001 implements QunarCrawler {
+import demo.zongbo03.Helper;
+
+public class Wrapper_gjsairli001 implements QunarCrawler {
+
 	// 无票
 	private static final String NO_TICKET = "Sorry, there are no fares available on this date.";
 
@@ -36,30 +41,24 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 	public static String CURRENCY = "USD";
 
 	// http://www.liat.com/
-
 	public static void main(String[] args) {
-		FlightSearchParam searchParam = new FlightSearchParam();
-		// searchParam.setDep("PTP"); //INVALID_DATE
-		// searchParam.setArr("STX");
-		// searchParam.setDepDate("2014-08-20");
 
-		// BGI SDQ 2014-08-16
-		searchParam.setDep("BGI");
-		searchParam.setArr("SLU");
-		searchParam.setDepDate("2014-08-20");
-		// searchParam.setDep("DOM"); // Dominica (DOM)
-		// searchParam.setArr("SVD"); // St. Vincent (SVD)
-		// searchParam.setDepDate("2014-08-12");
-		searchParam.setWrapperid("gjdairli001");
+		FlightSearchParam searchParam = new FlightSearchParam();
+		searchParam.setDep("SLU");
+		searchParam.setArr("BGI");
+		searchParam.setDepDate("2014-07-20");
+		searchParam.setRetDate("2014-08-12");
+		searchParam.setWrapperid("gjsairli001");
 		searchParam.setTimeOut("60000");
 		searchParam.setToken("");
 
-		String html = new Wrapper_gjdairli001().getHtml(searchParam);
+		String html = new Wrapper_gjsairli001().getHtml(searchParam);
+		// System.out.println(html);
 		ProcessResultInfo result = new ProcessResultInfo();
-		result = new Wrapper_gjdairli001().process(html, searchParam);
+		result = new Wrapper_gjsairli001().process(html, searchParam);
 		if (result.isRet() && result.getStatus().equals(Constants.SUCCESS)) {
-			List<OneWayFlightInfo> flightList = (List<OneWayFlightInfo>) result.getData();
-			for (OneWayFlightInfo in : flightList) {
+			List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
+			for (RoundTripFlightInfo in : flightList) {
 				System.out.println("************" + in.getInfo().toString());
 				System.out.println("++++++++++++" + in.getDetail().toString());
 			}
@@ -70,45 +69,21 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
-		String bookingUrlPre = "http://book.liat.com/Select.aspx";
+		String bookingUrlPre = "https://www.luxair.lu/cms/luxair.php";
 		BookingResult bookingResult = new BookingResult();
 
 		BookingInfo bookingInfo = new BookingInfo();
 		bookingInfo.setAction(bookingUrlPre);
-		bookingInfo.setMethod("post");
-		// 获取年月日
-		String[] dates = arg0.getDepDate().split("-");
+		bookingInfo.setMethod("get");
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("AvailabilitySearchInputSelectView$ButtonSubmit", "");
-		map.put("AvailabilitySearchInputSelectView$DropDownListMarketDateRange1", "0|0");
-		map.put("AvailabilitySearchInputSelectView$DropDownListMarketDateRange2", "0|0");
-		map.put("AvailabilitySearchInputSelectView$DropDownListMarketDay1", dates[2]);
-		map.put("AvailabilitySearchInputSelectView$DropDownListMarketDay2", dates[2]);
-		map.put("AvailabilitySearchInputSelectView$DropDownListMarketMonth1", dates[0] + "-" + dates[1]);
-		map.put("AvailabilitySearchInputSelectView$DropDownListMarketMonth2", dates[0] + "-" + dates[1]);
-		map.put("AvailabilitySearchInputSelectView$DropDownListPassengerType_ADS", "0");
-		map.put("AvailabilitySearchInputSelectView$DropDownListPassengerType_ADT", "1");
-		map.put("AvailabilitySearchInputSelectView$DropDownListPassengerType_CHD", "0");
-		map.put("AvailabilitySearchInputSelectView$RadioButtonMarketStructure", "OneWay");
-		map.put("AvailabilitySearchInputSelectView$TextBoxMarketDestination1", arg0.getArr());
-		map.put("AvailabilitySearchInputSelectView$TextBoxMarketOrigin1", arg0.getDep());
-		map.put("AvailabilitySearchInputSelectView$TextBoxMarketDestination2", "");
-		map.put("AvailabilitySearchInputSelectView$TextBoxMarketOrigin2", "");
-		map.put("AvailabilitySearchInputSelectView$promocode", "");
-		map.put("ControlGroupPriceAndConverterSelectView$CurrConvertSelectViewAjax$DropDownListConvCurr", "");
-		map.put("ControlGroupSelectView$AvailabilityInputSelectView$market1", "");
-		map.put("__EVENTARGUMENT", "");
-		map.put("__EVENTTARGET", "");
-		map.put("__VIEWSTATE", "/wEPDwUBMGRkbUFOpZl3yd/NgMo6CxihRbceiZ4=");
-		map.put("date_picker", arg0.getDepDate());
-		map.put("date_picker", arg0.getDepDate());
-		map.put("destinationStation1", arg0.getArr());
-		map.put("destinationStation2", "");
-		map.put("originStation1", "arg0.getDep()");
-		map.put("originStation2", "");
-		map.put("pageToken", "");
-		map.put("query", "Search");
-
+		map.put("p", "EN,17958,,,,,");
+		String lap = String
+				.format("PRD,en,2,ECONOMY_BUSINESS_LASTMINUTE,%s,%s,%s,%s,false,O,1,0,0,0,WWW_LUXAIR_LU,true,true,true,false,false,true,,,",
+						arg0.getDep(), arg0.getArr(), arg0.getDepDate().replaceAll("-", ""), arg0.getRetDate()
+								.replaceAll("-", ""));
+		map.put("lap", lap);
+		// map.put("lgBookButton", "Book Now");
+		// map.put("Referer", "https://www.luxair.lu/cms/page?p=en,17652,,,,,");
 		bookingInfo.setInputs(map);
 		bookingResult.setData(bookingInfo);
 		bookingResult.setRet(true);
@@ -118,6 +93,11 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 
 	@Override
 	public String getHtml(FlightSearchParam arg0) {
+		// ControlGroupSelectView$AvailabilityInputSelectView$market1=0~V~~V12~0950~~1~X|LI~ 771~ ~~SLU~07/20/2014
+		// 07:00~BGI~07/20/2014 07:45~
+		// ControlGroupSelectView$AvailabilityInputSelectView$market2=0~V~~V12~0950~~1~X|LI~ 361~ ~~BGI~08/20/2014
+		// 08:30~SVD~08/20/2014 11:05~POS^LI~ 756~ ~~SVD~08/20/2014 13:50~SLU~08/20/2014 14:20~
+
 		QFHttpClient httpClient = null;
 		QFPostMethod post = null;
 		try {
@@ -128,40 +108,44 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 			// 获取年月日
 			String[] dates = arg0.getDepDate().split("-");
+			String[] redates = arg0.getRetDate().split("-");
+
 			post = new QFPostMethod(urlPost);
 			// 设置post提交表单数据
 			NameValuePair[] parametersBody = new NameValuePair[] {
 					new NameValuePair("AvailabilitySearchInputSelectView$ButtonSubmit", ""),
-					new NameValuePair("AvailabilitySearchInputSelectView$TextBoxMarketDestination2", ""),
-					new NameValuePair("AvailabilitySearchInputSelectView$TextBoxMarketOrigin2", ""),
+					new NameValuePair("AvailabilitySearchInputSelectView$TextBoxMarketDestination2", arg0.getDep()),
+					new NameValuePair("AvailabilitySearchInputSelectView$TextBoxMarketOrigin2", arg0.getArr()),
 					new NameValuePair("AvailabilitySearchInputSelectView$promocode", ""),
 					new NameValuePair(
 							"ControlGroupPriceAndConverterSelectView$CurrConvertSelectViewAjax$DropDownListConvCurr",
 							""),
 					new NameValuePair("ControlGroupSelectView$AvailabilityInputSelectView$market1", ""),
+					new NameValuePair("ControlGroupSelectView$AvailabilityInputSelectView$market2", ""),
 					// new NameValuePair("ControlGroupSelectView$AvailabilityInputSelectView$market1",
 					// "0~V~~V12~0950~~1~X|LI~ 370~ ~~BGI~08/19/2014 08:20~SLU~08/19/2014 09:05~"),
 					new NameValuePair("__EVENTARGUMENT", ""),
 					new NameValuePair("__EVENTTARGET", ""),
-					new NameValuePair("destinationStation2", ""),
-					new NameValuePair("originStation2", ""),
+					new NameValuePair("destinationStation2", arg0.getDep()),
+					new NameValuePair("originStation2", arg0.getArr()),
 					new NameValuePair("pageToken", ""),
 					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListMarketDateRange1", "0|0"),
 					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListMarketDateRange2", "0|0"),
 					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListMarketDay1", dates[2]),
-					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListMarketDay2", dates[2]),
+					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListMarketDay2", redates[2]),
 					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListMarketMonth1", dates[0] + "-"
 							+ dates[1]),
-					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListMarketMonth2", dates[0] + "-"
-							+ dates[1]),
+					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListMarketMonth2", redates[0] + "-"
+							+ redates[1]),
 					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListPassengerType_ADS", "0"),
 					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListPassengerType_ADT", "1"),
 					new NameValuePair("AvailabilitySearchInputSelectView$DropDownListPassengerType_CHD", "0"),
-					new NameValuePair("AvailabilitySearchInputSelectView$RadioButtonMarketStructure", "OneWay"),
+					new NameValuePair("AvailabilitySearchInputSelectView$RadioButtonMarketStructure", "RoundTrip"),
 					new NameValuePair("AvailabilitySearchInputSelectView$TextBoxMarketDestination1", arg0.getArr()),
 					new NameValuePair("AvailabilitySearchInputSelectView$TextBoxMarketOrigin1", arg0.getDep()),
 					new NameValuePair("__VIEWSTATE", "/wEPDwUBMGRkbUFOpZl3yd/NgMo6CxihRbceiZ4="),
-					new NameValuePair("date_picker", arg0.getDepDate()), new NameValuePair("date_picker", ""),
+					new NameValuePair("date_picker", arg0.getDepDate()),
+					new NameValuePair("date_picker", arg0.getRetDate()),
 					new NameValuePair("destinationStation1", arg0.getArr()),
 					new NameValuePair("originStation1", arg0.getDep()), new NameValuePair("query", "Search") };
 			post.setRequestBody(parametersBody);
@@ -180,6 +164,7 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 			}
 		}
 		return "Exception";
+
 	}
 
 	@Override
@@ -201,19 +186,45 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 			// 去除所有空格换行等空白字符和引号
 			String cleanHtml = cleanHtml(html);
 
-			// 航班列表
-			List<OneWayFlightInfo> flightList = getFlightListFromHtml(searchParam, cleanHtml);
+			// 去程航班列表
+			List<OneWayFlightInfo> flightList = getFlightListFromHtml(searchParam, cleanHtml, false);
+			// 返程航班列表
+			List<OneWayFlightInfo> reflightList = getFlightListFromHtml(searchParam, cleanHtml, true);
+			// System.out.println(flightList.size());
+			// System.out.println(reflightList.size());
 
 			// 没有结果
-			if (flightList == null || flightList.size() == 0) {
+			if (flightList == null || flightList.size() == 0 || reflightList == null || reflightList.size() == 0) {
 				result.setRet(false);
 				result.setStatus(Constants.NO_RESULT);
 				return result;
 			}
 
+			List<RoundTripFlightInfo> roundList = new ArrayList<RoundTripFlightInfo>(); // 往返列表
+			// 去返航班组合:笛卡尔积排列组合
+			for (OneWayFlightInfo out : flightList) {
+				for (OneWayFlightInfo in : reflightList) {
+
+					RoundTripFlightInfo roundInfo = new RoundTripFlightInfo();
+
+					FlightDetail detail = Helper.cloneDetail(out.getDetail());
+					detail.setPrice(detail.getPrice() + in.getDetail().getPrice());// 价格为来往的总价格
+
+					roundInfo.setDetail(detail);// detail
+					roundInfo.setInfo(Helper.cloneFlightSegementList(out.getInfo()));// 去程航班段
+					roundInfo.setOutboundPrice(out.getDetail().getPrice());// 去程价格
+					roundInfo.setRetdepdate(in.getDetail().getDepdate());// 返程日期
+					roundInfo.setRetflightno(in.getDetail().getFlightno()); // 返程航班号
+					roundInfo.setRetinfo(Helper.cloneFlightSegementList(in.getInfo()));// 返程航班段
+					roundInfo.setReturnedPrice(in.getDetail().getPrice());// 返程价格
+
+					roundList.add(roundInfo);
+				}
+			}
+
 			result.setRet(true);
 			result.setStatus(Constants.SUCCESS);
-			result.setData(flightList);
+			result.setData(roundList);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.setRet(false);
@@ -225,14 +236,15 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 
 	/**
 	 * 解析html，获取航班列表
+	 * returnFlag false：去程----- true:返程
 	 */
-	public List<OneWayFlightInfo> getFlightListFromHtml(FlightSearchParam searchParam, String cleanHtml)
-			throws Exception {
+	public List<OneWayFlightInfo> getFlightListFromHtml(FlightSearchParam searchParam, String cleanHtml,
+			boolean returnFlag) throws Exception {
 
 		// 航班列表
 		List<OneWayFlightInfo> flightList = new ArrayList<OneWayFlightInfo>();
 		// 从html字符串中提取各个航班的信息
-		String[] flightHtmlList = getFlightHtmlList(cleanHtml);
+		String[] flightHtmlList = getFlightHtmlList(cleanHtml, returnFlag);
 		// for (String f : flightHtmlList) {
 		// System.out.println(f);
 		// System.out.println("");
@@ -418,10 +430,13 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 
 	/**
 	 * 从html字符串中提取各个航班的信息
+	 * returnFlag false：去程----- true:返程
 	 */
-	public String[] getFlightHtmlList(String cleanHtml) {
+	public String[] getFlightHtmlList(String cleanHtml, boolean returnFlag) {
+		// System.out.println(cleanHtml);
 		// 航班列表的开始标记
-		String listFlagBegin = "<tableid=availabilityTable0class=availabilityTable>";
+		String listFlagBegin = returnFlag ? "tableid=availabilityTable1class=availabilityTable"
+				: "<tableid=availabilityTable0class=availabilityTable>";
 		// 航班列表的结束标记
 		String listFlagEnd = "</table>";
 		// 整个航班列表的html
@@ -489,5 +504,11 @@ public class Wrapper_gjdairli001 implements QunarCrawler {
 			return "12";
 		}
 		return null;
+	}
+
+	public double sum(double d1, double d2) {
+		BigDecimal bd1 = new BigDecimal(Double.toString(d1));
+		BigDecimal bd2 = new BigDecimal(Double.toString(d2));
+		return bd1.add(bd2).doubleValue();
 	}
 }
