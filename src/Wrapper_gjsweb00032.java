@@ -1,3 +1,4 @@
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class Wrapper_gjsweb00032 implements QunarCrawler {
 		result = new Wrapper_gjsweb00032().process(html, searchParam);
 		if (result.isRet() && result.getStatus().equals(Constants.SUCCESS)) {
 			List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
-			System.out.println(flightList.size());
+			// System.out.println(flightList.size());
 			for (RoundTripFlightInfo in : flightList) {
 				System.out.println(in.getInfo().toString());
 				System.out.println(in.getDetail().toString());
@@ -106,10 +107,14 @@ public class Wrapper_gjsweb00032 implements QunarCrawler {
 			String[] dateRet = arg0.getRetDate().split("-"); // [0]2014 [1]08 [2]20
 			String date1 = dateDep[1] + "/" + dateDep[2] + "/" + dateDep[0];
 			String date2 = dateRet[1] + "/" + dateRet[2] + "/" + dateRet[0];
+			String date1Ajax = date1.replaceAll("/", "");
+			// System.out.println(date1Ajax);
+			String date2Ajax = date2.replaceAll("/", "");
 
 			String getUrl = String
 					.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?type=roundtrip&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
-							arg0.getDep(), date1, arg0.getArr(), date2);
+							arg0.getDep(), URLEncoder.encode(date1, "utf-8"), arg0.getArr(),
+							URLEncoder.encode(date2, "utf-8"));
 
 			get = new QFGetMethod(getUrl);
 			get.getParams().setContentCharset("utf-8");
@@ -125,8 +130,8 @@ public class Wrapper_gjsweb00032 implements QunarCrawler {
 				String ranNum = getRandomNum();
 				String ajaxUrl = String
 						.format("http://www.hop2.com/flight/results?type=roundtrip&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=%s&adt=1&chd=0&near=0000&airline=&nextkey=&_=%s",
-								arg0.getDep(), arg0.getArr(), date1.replaceAll("/", ""), arg0.getArr(), arg0.getDep(),
-								date2.replaceAll("/", ""), ranNum);
+								arg0.getDep(), arg0.getArr(), date1Ajax, arg0.getArr(), arg0.getDep(), date2Ajax,
+								ranNum);
 				getAjax = new QFGetMethod(ajaxUrl);
 				getAjax.getParams().setContentCharset("utf-8");
 				// getAjax.addRequestHeader("connection","keep-alive");
