@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.lang.StringUtils;
@@ -106,89 +105,41 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 
 	@Override
 	public String getHtml(FlightSearchParam arg0) {
-
 		QFGetMethod get = null;
 		QFGetMethod getAjax = null;
+		try {
+			QFHttpClient httpClient = new QFHttpClient(arg0, false);
+			// 获取年月日
+			String[] dateDep = arg0.getDepDate().split("-"); // [0]2014 [1]08 [2]01
+			String SearchFlightControl1 = java.net.URLEncoder.encode("../../", "utf-8");
+			String searchTemp = java.net.URLEncoder.encode("SearchFlightControl1$hdPath", "utf-8");
+			String date1 = dateDep[1] + "/" + dateDep[2] + "/" + dateDep[0];
+			String dateT = java.net.URLEncoder.encode(date1, "utf-8");
 
-		// 获取年月日
-		String[] dateDep = arg0.getDepDate().split("-"); // [0]2014 [1]08 [2]01
-		String SearchFlightControl1 = null;
-		try {
-			SearchFlightControl1 = java.net.URLEncoder.encode("../../", "utf-8");
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		String searchTemp = null;
-		try {
-			searchTemp = java.net.URLEncoder.encode("SearchFlightControl1$hdPath", "utf-8");
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		String date1 = dateDep[1] + "/" + dateDep[2] + "/" + dateDep[0];
-		String getUrl = String
-				.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?%s=%s&type=oneway&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
-						searchTemp, SearchFlightControl1, arg0.getDep(), date1, arg0.getArr(), date1);
-		get = new QFGetMethod(getUrl);
-		String urlGet = ""; // get请求的url
-		QFHttpClient httpClient = new QFHttpClient(arg0, false);
-		try {
-			// 按照浏览器的模式来处理param
-			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+			String getUrl = String
+					.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?%s=%s&type=oneway&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
+							searchTemp, SearchFlightControl1, arg0.getDep(), dateT, arg0.getArr(), dateT);
+			get = new QFGetMethod(getUrl);
 			get.getParams().setContentCharset("utf-8");
-			httpClient.executeMethod(get);
-
-			if (get.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY
-					|| get.getStatusCode() == HttpStatus.SC_MOVED_PERMANENTLY) {
-
-				Header location = get.getResponseHeader("Location");
-				if (location != null) {
-					urlGet = location.getValue();
-					if (!urlGet.startsWith("http")) {
-						urlGet = get.getURI().getScheme() + "://" + get.getURI().getHost()
-								+ (get.getURI().getPort() == -1 ? "" : ":" + get.getURI().getPort()) + urlGet;
-					}
-				} else {
-					return "";
-				}
-			}
-
-			// String cookie = StringUtils.join(httpClient.getState().getCookies(), "; ");
-			// System.out.println(cookie);
-
-			// httpClient.getState().clearCookies();
-			// get.addRequestHeader(
-			// "Cookie",
-			// "AWSELB=7F99A9070EBF95A149C825F24B9BA179EB0D630BC525CEEC5B2CA031776C26FC68194C8E1BBC37AFBCC999160AB64B05634371443C4224E2D3E973F4FB8602F2DECF45AC44; longCookie=origin1%3D%28LUX%29%20Luxembourg%20Airport%20-%20Luxembourg%2C%20Luxembourg; type=oneway; shortCookie=type%3Doneway%26date1%3D06/25/2014%26destination1%3D%28BER%29%20Berlin%2C%20Germany%20-%20All%20Airports%26date2%3D08/13/2014%26DptDate%24inputDate%3D08/12/2014%26RtnDate%24inputDate%3D08/13/2014%26adt%3D1%26chd%3D0%26cabin%3De; __utma=1.1758395192.1403504144.1403504144.1403508480.2; __utmc=1; __utmz=1.1403504144.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); proxy=b; ASP.NET_SessionId=tupcx355uwqufqezodzabvvk; __utmb=1.1.10.1403508480");
-			// get.addRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-			// get.addRequestHeader("Accept-Encoding", "gzip, deflate");
-			// get.addRequestHeader("Accept-Language", "zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3");
-			// get.addRequestHeader("Connection", "keep-alive");
-			// get.addRequestHeader("Host", "www.hop2.com");
-			// get.addRequestHeader("Referer", getUrl);
-			// get.addRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:24.0) Gecko/20100101 Firefox/24.0");
-			//
-			// get.getParams().setContentCharset("utf-8");
-			// get.setRequestHeader(param);
+			// 按照浏览器的模式来处理cookie
+			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 
 			// get.setRequestHeader("Referer",
 			// "http://www.hop2.com/page/Flight/AirResultForm.aspx?type=oneway&origin1=BGI&date1=08012014&destination1=SLU&date2=08022014&adt=1&chd=0&cabin=e");
-			// int getStatus = httpClient.executeMethod(get);
-			//
-			// if (getStatus != HttpStatus.SC_OK) {
-			// return "Exception";
-			// }
+			int getStatus = httpClient.executeMethod(get);
+
+			if (getStatus != HttpStatus.SC_OK) {
+				return "Exception";
+			}
 
 			while (true) {
 				String ranNum = getRandomNum();
-				String spe = java.net.URLEncoder.encode("_", "utf-8");
 				String ajaxUrl = String
-						.format("http://www.hop2.com/flight/results?type=oneway&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=00000&adt=1&chd=0&near=0000&airline=&nextkey=&%s=%s",
-								arg0.getDep(), arg0.getArr(), date1, arg0.getDep(), arg0.getArr(), spe, ranNum);
+						.format("http://www.hop2.com/flight/results?type=oneway&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=00000&adt=1&chd=0&near=0000&airline=&nextkey=&_=%s",
+								arg0.getDep(), arg0.getArr(), dateT, arg0.getDep(), arg0.getArr(), ranNum);
 				getAjax = new QFGetMethod(ajaxUrl);
 				getAjax.getParams().setContentCharset("utf-8");
-				getAjax.addRequestHeader("connection", "keep-alive");
+				// getAjax.addRequestHeader("connection","keep-alive");
 
 				int ajaxStatus = httpClient.executeMethod(getAjax);
 
@@ -248,14 +199,14 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 			// System.out.println(jsonStr);
 			if (StringUtils.isEmpty(jsonStr)) {
 				result.setRet(false);
-				result.setStatus(Constants.PARSING_FAIL);
+				result.setStatus(Constants.NO_RESULT);
 				return result;
 			}
 			JSONArray ajson = JSON.parseArray(jsonStr);
 			// System.out.println(ajson.size());
 			if (ajson == null || ajson.size() == 0) {
 				result.setRet(false);
-				result.setStatus(Constants.PARSING_FAIL);
+				result.setStatus(Constants.NO_RESULT);
 				return result;
 			}
 
@@ -299,8 +250,8 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 					String flightNo = object.getString("ac") + object.getString("fn"); // flightNo
 					flightNoList.add(flightNo);
 					seg.setFlightno(flightNo);
-					String[] timeDep = object.getString("at").split(" ");
-					String[] timeArr = object.getString("dt").split(" ");
+					String[] timeDep = object.getString("dt").split(" ");
+					String[] timeArr = object.getString("at").split(" ");
 					seg.setDepDate(setDate(timeDep[0])); // depDate
 					seg.setDeptime(timeDep[1]); // depTime
 					seg.setArrDate(setDate(timeArr[0])); // arrDate
