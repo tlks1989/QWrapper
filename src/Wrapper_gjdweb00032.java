@@ -1,4 +1,5 @@
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,14 +112,27 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 			QFHttpClient httpClient = new QFHttpClient(arg0, false);
 			// 获取年月日
 			String[] dateDep = arg0.getDepDate().split("-"); // [0]2014 [1]08 [2]01
-			String SearchFlightControl1 = java.net.URLEncoder.encode("../../", "utf-8");
-			String searchTemp = java.net.URLEncoder.encode("SearchFlightControl1$hdPath", "utf-8");
+			String SearchFlightControl1 = URLEncoder.encode("../../", "utf-8");
+			String searchTemp = URLEncoder.encode("SearchFlightControl1$hdPath", "utf-8");
 			String date1 = dateDep[1] + "/" + dateDep[2] + "/" + dateDep[0];
-			String dateT = java.net.URLEncoder.encode(date1, "utf-8");
+			String dateT = URLEncoder.encode(date1, "utf-8");
+
+			// Expedia=on
+			// SearchFlightControl1$hdPath=../../
+			// adt=1
+			// cabin=e
+			// chd=0
+			// date1=06/25/2014
+			// date2=08/13/2014
+			// destination1=(BER) Berlin, Germany - All Airports
+			// origin1=(LUX) Luxembourg Airport - Luxembourg, Luxembourg
+			// type=oneway
 
 			String getUrl = String
 					.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?%s=%s&type=oneway&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
 							searchTemp, SearchFlightControl1, arg0.getDep(), dateT, arg0.getArr(), dateT);
+			// http://www.hop2.com/page/Flight/AirResultForm.aspx?SearchFlightControl1%24hdPath=..%2F..%2F&type=oneway&origin1=%28LUX%29+Luxembourg+Airport+-+Luxembourg%2C+Luxembourg&date1=06%2F25%2F2014&destination1=%28BER%29+Berlin%2C+Germany+-+All+Airports&date2=08%2F13%2F2014&adt=1&chd=0&cabin=e&Expedia=on
+			System.out.println(getUrl);
 			get = new QFGetMethod(getUrl);
 			get.getParams().setContentCharset("utf-8");
 			// 按照浏览器的模式来处理cookie
@@ -137,6 +151,7 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 				String ajaxUrl = String
 						.format("http://www.hop2.com/flight/results?type=oneway&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=00000&adt=1&chd=0&near=0000&airline=&nextkey=&_=%s",
 								arg0.getDep(), arg0.getArr(), dateT, arg0.getDep(), arg0.getArr(), ranNum);
+				// http://www.hop2.com/flight/results?type=oneway&cabin=E&origin1=LUX&destination1=BER&date1=06252014&origin2=BER&destination2=LUX&date2=00000&adt=1&chd=0&near=0000&airline=&nextkey=&_=1403510031985
 				getAjax = new QFGetMethod(ajaxUrl);
 				getAjax.getParams().setContentCharset("utf-8");
 				// getAjax.addRequestHeader("connection","keep-alive");
