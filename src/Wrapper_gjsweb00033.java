@@ -152,7 +152,6 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 					return returnHtml;
 				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -215,9 +214,9 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 			List<String> existFlag = new ArrayList<String>(); // 是否存在标识 key判断
 			for (int i = 0; i < ajson.size(); i++) {
 				RoundTripFlightInfo rtFlight = new RoundTripFlightInfo();
-				List<FlightSegement> segs = new ArrayList<FlightSegement>();
 				FlightDetail flightDetail = new FlightDetail();
 				List<String> flightNoList = new ArrayList<String>();
+				List<String> flightRetNoList = new ArrayList<String>();
 				JSONObject ojson = ajson.getJSONObject(i);
 				// System.out.println("ojson   " + ojson);
 				String key = ojson.getString("key");
@@ -228,10 +227,13 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 				}
 
 				JSONArray tps = ojson.getJSONArray("tps");
+				List<FlightSegement> gosegs = new ArrayList<FlightSegement>(); // 去程
+				List<FlightSegement> resegs = new ArrayList<FlightSegement>(); // 返程
 				for (int t = 0; t < tps.size(); t++) { // 0:去程 1:返程
 					JSONArray segmentArray = ((JSONObject) tps.get(t)).getJSONArray("segments");
 					// System.out.println("segments   " + segmentArray);
 					for (int j = 0; j < segmentArray.size(); j++) {
+
 						FlightSegement seg = new FlightSegement();
 						JSONObject object = (JSONObject) segmentArray.get(j);
 						String flightNo = object.getString("ac") + object.getString("fn"); // flightNo
@@ -246,7 +248,14 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 						seg.setDepairport(object.getString("dp")); // depairport
 						seg.setArrairport(object.getString("ds")); // arrairport
 						seg.setCompany(object.getString("ac")); // company
-						segs.add(seg);
+
+						if (t == 1) { // 去程
+							gosegs.add(seg);
+						}
+						if (t == 1) { // 返程
+							resegs.add(seg);
+							flightRetNoList.add(flightNo); // 返程航班号
+						}
 					}
 					flightDetail.setFlightno(flightNoList);
 				}
@@ -258,8 +267,13 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 				flightDetail.setDepcity(searchParam.getDep());
 				flightDetail.setArrcity(searchParam.getArr());
 				flightDetail.setWrapperid(searchParam.getWrapperid());
-				rtFlight.setDetail(flightDetail);
-				rtFlight.setInfo(segs);
+
+				rtFlight.setDetail(flightDetail); // detail
+				rtFlight.setInfo(gosegs); // 去程航班段
+				rtFlight.setRetdepdate(sdf.parse(searchParam.getRetDate())); // 返程日期
+				rtFlight.setRetflightno(flightRetNoList); // 返程航班号
+				rtFlight.setRetinfo(resegs); // 返程航班段
+
 				flightList.add(rtFlight);
 			}
 		} catch (Exception e) {// 解析失败
