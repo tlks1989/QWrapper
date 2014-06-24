@@ -130,8 +130,8 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 			// type=oneway
 
 			String getUrl = String
-					.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?%s=%s&type=oneway&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
-							searchTemp, SearchFlightControl1, arg0.getDep(), dateT, arg0.getArr(), dateT);
+					.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?type=oneway&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
+							arg0.getDep(), dateT, arg0.getArr(), dateT);
 			// http://www.hop2.com/page/Flight/AirResultForm.aspx?SearchFlightControl1%24hdPath=..%2F..%2F&type=oneway&origin1=%28LUX%29+Luxembourg+Airport+-+Luxembourg%2C+Luxembourg&date1=06%2F25%2F2014&destination1=%28BER%29+Berlin%2C+Germany+-+All+Airports&date2=08%2F13%2F2014&adt=1&chd=0&cabin=e&Expedia=on
 			// System.out.println(getUrl);
 			get = new QFGetMethod(getUrl);
