@@ -1,4 +1,3 @@
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,16 +20,16 @@ import com.qunar.qfwrapper.bean.booking.BookingResult;
 import com.qunar.qfwrapper.bean.search.FlightDetail;
 import com.qunar.qfwrapper.bean.search.FlightSearchParam;
 import com.qunar.qfwrapper.bean.search.FlightSegement;
-import com.qunar.qfwrapper.bean.search.OneWayFlightInfo;
 import com.qunar.qfwrapper.bean.search.ProcessResultInfo;
+import com.qunar.qfwrapper.bean.search.RoundTripFlightInfo;
 import com.qunar.qfwrapper.constants.Constants;
 import com.qunar.qfwrapper.interfaces.QunarCrawler;
 import com.qunar.qfwrapper.util.QFGetMethod;
 import com.qunar.qfwrapper.util.QFHttpClient;
 
-public class Wrapper_gjdweb00032 implements QunarCrawler {
-	// http://www.hop2.com/
+public class Wrapper_gjsweb00033 implements QunarCrawler {
 
+	// http://www.hop2.com/
 	public static void main(String[] args) {
 		FlightSearchParam searchParam = new FlightSearchParam();
 		// searchParam.setDep("PTP"); //INVALID_DATE
@@ -40,25 +39,24 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 		// BGI SDQ 2014-08-16
 		searchParam.setDep("BGI");
 		searchParam.setArr("SLU");
-		searchParam.setDepDate("2014-08-20");
-		// searchParam.setDep("LUX"); // Dominica (DOM)
-		// searchParam.setArr("BER"); // St. Vincent (SVD)
-		// searchParam.setDepDate("2014-06-24");
+		searchParam.setDepDate("2014-08-01");
+		searchParam.setRetDate("2014-08-20");
 		// searchParam.setDep("DOM"); // Dominica (DOM)
 		// searchParam.setArr("SVD"); // St. Vincent (SVD)
 		// searchParam.setDepDate("2014-08-12");
-		searchParam.setWrapperid("gjdweb00032");
+		// searchParam.setRetDate("2014-08-20");
+		searchParam.setWrapperid("gjsweb00032");
 		searchParam.setTimeOut("60000");
 		searchParam.setToken("");
 
-		String html = new Wrapper_gjdweb00032().getHtml(searchParam);
+		String html = new Wrapper_gjsweb00033().getHtml(searchParam);
 		// System.out.println(html);
 		ProcessResultInfo result = new ProcessResultInfo();
-		result = new Wrapper_gjdweb00032().process(html, searchParam);
+		result = new Wrapper_gjsweb00033().process(html, searchParam);
 		if (result.isRet() && result.getStatus().equals(Constants.SUCCESS)) {
-			List<OneWayFlightInfo> flightList = (List<OneWayFlightInfo>) result.getData();
+			List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
 			// System.out.println(flightList.size());
-			for (OneWayFlightInfo in : flightList) {
+			for (RoundTripFlightInfo in : flightList) {
 				System.out.println(in.getInfo().toString());
 				System.out.println(in.getDetail().toString());
 				System.out.println("");
@@ -71,29 +69,23 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
 		String bookingUrlPre = "http://www.hop2.com/page/Flight/AirResultForm.aspx";
-		String SearchFlightControl1 = null;
-		String searchTemp = null;
-		try {
-			SearchFlightControl1 = java.net.URLEncoder.encode("../../", "utf-8");
-			searchTemp = java.net.URLEncoder.encode("SearchFlightControl1$hdPath", "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 
 		// 获取年月日
 		String[] dateDep = arg0.getDepDate().split("-"); // [0]2014 [1]08 [2]01
 		String date1 = dateDep[1] + "/" + dateDep[2] + "/" + dateDep[0];
+		String[] dateRet = arg0.getRetDate().split("-"); // [0]2014 [1]08 [2]01
+		String date2 = dateRet[1] + "/" + dateRet[2] + "/" + dateRet[0];
+
 		BookingResult bookingResult = new BookingResult();
 		BookingInfo bookingInfo = new BookingInfo();
 		bookingInfo.setAction(bookingUrlPre);
 		bookingInfo.setMethod("get");
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put(searchTemp, SearchFlightControl1);
-		map.put("type", "oneway");
+		map.put("type", "roundtrip");
 		map.put("origin1", arg0.getDep());
 		map.put("date1", date1);
 		map.put("destination1", arg0.getArr());
-		map.put("date2", date1);
+		map.put("date2", date2);
 		map.put("adt", "1");
 		map.put("chd", "0");
 		map.put("cabin", "e");
@@ -112,22 +104,22 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 			QFHttpClient httpClient = new QFHttpClient(arg0, false);
 			// 获取年月日
 			String[] dateDep = arg0.getDepDate().split("-"); // [0]2014 [1]08 [2]01
+			String[] dateRet = arg0.getRetDate().split("-"); // [0]2014 [1]08 [2]20
 			String date1 = dateDep[1] + "/" + dateDep[2] + "/" + dateDep[0];
-			String dateT = URLEncoder.encode(date1, "utf-8");
-			String dateAjax = dateDep[1] + dateDep[2] + dateDep[0];
+			String date2 = dateRet[1] + "/" + dateRet[2] + "/" + dateRet[0];
+			String date1Ajax = date1.replaceAll("/", "");
+			// System.out.println(date1Ajax);
+			String date2Ajax = date2.replaceAll("/", "");
 
 			String getUrl = String
-					.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?type=oneway&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
-							arg0.getDep(), dateT, arg0.getArr(), dateT);
-			// http://www.hop2.com/page/Flight/AirResultForm.aspx?SearchFlightControl1%24hdPath=..%2F..%2F&type=oneway&origin1=%28LUX%29+Luxembourg+Airport+-+Luxembourg%2C+Luxembourg&date1=06%2F25%2F2014&destination1=%28BER%29+Berlin%2C+Germany+-+All+Airports&date2=08%2F13%2F2014&adt=1&chd=0&cabin=e&Expedia=on
-			// System.out.println(getUrl);
+					.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?type=roundtrip&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
+							arg0.getDep(), URLEncoder.encode(date1, "utf-8"), arg0.getArr(),
+							URLEncoder.encode(date2, "utf-8"));
+
 			get = new QFGetMethod(getUrl);
 			get.getParams().setContentCharset("utf-8");
 			// 按照浏览器的模式来处理cookie
 			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-
-			// get.setRequestHeader("Referer",
-			// "http://www.hop2.com/page/Flight/AirResultForm.aspx?type=oneway&origin1=BGI&date1=08012014&destination1=SLU&date2=08022014&adt=1&chd=0&cabin=e");
 			int getStatus = httpClient.executeMethod(get);
 
 			if (getStatus != HttpStatus.SC_OK) {
@@ -137,15 +129,14 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 			while (true) {
 				String ranNum = getRandomNum();
 				String ajaxUrl = String
-						.format("http://www.hop2.com/flight/results?type=oneway&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=00000&adt=1&chd=0&near=0000&airline=&nextkey=&_=%s",
-								arg0.getDep(), arg0.getArr(), dateAjax, arg0.getDep(), arg0.getArr(), ranNum);
-				// http://www.hop2.com/flight/results?type=oneway&cabin=E&origin1=LUX&destination1=BER&date1=06252014&origin2=BER&destination2=LUX&date2=00000&adt=1&chd=0&near=0000&airline=&nextkey=&_=1403510031985
+						.format("http://www.hop2.com/flight/results?type=roundtrip&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=%s&adt=1&chd=0&near=0000&airline=&nextkey=&_=%s",
+								arg0.getDep(), arg0.getArr(), date1Ajax, arg0.getArr(), arg0.getDep(), date2Ajax,
+								ranNum);
 				getAjax = new QFGetMethod(ajaxUrl);
 				getAjax.getParams().setContentCharset("utf-8");
 				// getAjax.addRequestHeader("connection","keep-alive");
 
 				int ajaxStatus = httpClient.executeMethod(getAjax);
-
 				if (ajaxStatus != HttpStatus.SC_OK) {
 					return "Exception";
 				}
@@ -172,21 +163,13 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 				getAjax.releaseConnection();
 			}
 		}
-
 		return "Exception";
 	}
 
 	@Override
 	public ProcessResultInfo process(String arg0, FlightSearchParam searchParam) {
 		String html = arg0;
-		// System.out.println(arg0);
-		/*
-		 * ProcessResultInfo中，
-		 * ret为true时，status可以为：SUCCESS(抓取到机票价格)|NO_RESULT(无结果，没有可卖的机票)
-		 * ret为false时，status可以为:CONNECTION_FAIL|INVALID_DATE|INVALID_AIRLINE|PARSING_FAIL|PARAM_ERROR
-		 * 
-		 * FlightDetail中的Fligthnolist，把这两个航班号都add上，然后针对每个航班号，有一个FlightSegment
-		 */
+		// System.out.println(html);
 		ProcessResultInfo result = new ProcessResultInfo();
 		if ("Exception".equals(html)) {
 			result.setRet(false);
@@ -194,7 +177,7 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 			return result;
 		}
 
-		List<OneWayFlightInfo> flightList = new ArrayList<OneWayFlightInfo>(); // 获得具体航班信息
+		List<RoundTripFlightInfo> flightList = new ArrayList<RoundTripFlightInfo>(); // 获得具体航班信息
 
 		try {
 			String jsonStr = StringUtils.substringBetween(html, "\"itins\":", "]}");
@@ -202,14 +185,14 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 			// System.out.println(jsonStr);
 			if (StringUtils.isEmpty(jsonStr)) {
 				result.setRet(false);
-				result.setStatus(Constants.NO_RESULT);
+				result.setStatus(Constants.PARSING_FAIL);
 				return result;
 			}
 			JSONArray ajson = JSON.parseArray(jsonStr);
 			// System.out.println(ajson.size());
 			if (ajson == null || ajson.size() == 0) {
 				result.setRet(false);
-				result.setStatus(Constants.NO_RESULT);
+				result.setStatus(Constants.PARSING_FAIL);
 				return result;
 			}
 
@@ -231,7 +214,7 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 
 			List<String> existFlag = new ArrayList<String>(); // 是否存在标识 key判断
 			for (int i = 0; i < ajson.size(); i++) {
-				OneWayFlightInfo oneWayFlight = new OneWayFlightInfo();
+				RoundTripFlightInfo rtFlight = new RoundTripFlightInfo();
 				List<FlightSegement> segs = new ArrayList<FlightSegement>();
 				FlightDetail flightDetail = new FlightDetail();
 				List<String> flightNoList = new ArrayList<String>();
@@ -245,36 +228,39 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 				}
 
 				JSONArray tps = ojson.getJSONArray("tps");
-				JSONArray segmentArray = ((JSONObject) tps.get(0)).getJSONArray("segments");
-				// System.out.println("segments   " + segmentArray);
-				for (int j = 0; j < segmentArray.size(); j++) {
-					FlightSegement seg = new FlightSegement();
-					JSONObject object = (JSONObject) segmentArray.get(j);
-					String flightNo = object.getString("ac") + object.getString("fn"); // flightNo
-					flightNoList.add(flightNo);
-					seg.setFlightno(flightNo);
-					String[] timeDep = object.getString("dt").split(" ");
-					String[] timeArr = object.getString("at").split(" ");
-					seg.setDepDate(setDate(timeDep[0])); // depDate
-					seg.setDeptime(timeDep[1]); // depTime
-					seg.setArrDate(setDate(timeArr[0])); // arrDate
-					seg.setArrtime(timeArr[1]); // arrTime
-					seg.setDepairport(object.getString("dp")); // depairport
-					seg.setArrairport(object.getString("ds")); // arrairport
-					seg.setCompany(object.getString("ac")); // company
-					segs.add(seg);
+				for (int t = 0; t < tps.size(); t++) { // 0:去程 1:返程
+					JSONArray segmentArray = ((JSONObject) tps.get(t)).getJSONArray("segments");
+					// System.out.println("segments   " + segmentArray);
+					for (int j = 0; j < segmentArray.size(); j++) {
+						FlightSegement seg = new FlightSegement();
+						JSONObject object = (JSONObject) segmentArray.get(j);
+						String flightNo = object.getString("ac") + object.getString("fn"); // flightNo
+						flightNoList.add(flightNo);
+						seg.setFlightno(flightNo);
+						String[] timeDep = object.getString("dt").split(" ");
+						String[] timeArr = object.getString("at").split(" ");
+						seg.setDepDate(setDate(timeDep[0])); // depDate
+						seg.setDeptime(timeDep[1]); // depTime
+						seg.setArrDate(setDate(timeArr[0])); // arrDate
+						seg.setArrtime(timeArr[1]); // arrTime
+						seg.setDepairport(object.getString("dp")); // depairport
+						seg.setArrairport(object.getString("ds")); // arrairport
+						seg.setCompany(object.getString("ac")); // company
+						segs.add(seg);
+					}
+					flightDetail.setFlightno(flightNoList);
 				}
+				flightDetail.setPrice(priceMap.get(key));
+				flightDetail.setTax(0d);
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				flightDetail.setDepdate(sdf.parse(searchParam.getDepDate()));
-				flightDetail.setFlightno(flightNoList);
 				flightDetail.setMonetaryunit(ojson.getString("currency"));
-				flightDetail.setPrice(priceMap.get(key));
 				flightDetail.setDepcity(searchParam.getDep());
 				flightDetail.setArrcity(searchParam.getArr());
 				flightDetail.setWrapperid(searchParam.getWrapperid());
-				oneWayFlight.setDetail(flightDetail);
-				oneWayFlight.setInfo(segs);
-				flightList.add(oneWayFlight);
+				rtFlight.setDetail(flightDetail);
+				rtFlight.setInfo(segs);
+				flightList.add(rtFlight);
 			}
 		} catch (Exception e) {// 解析失败
 			e.printStackTrace();
