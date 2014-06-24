@@ -55,12 +55,15 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 		result = new Wrapper_gjsweb00033().process(html, searchParam);
 		if (result.isRet() && result.getStatus().equals(Constants.SUCCESS)) {
 			List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
-			// System.out.println(flightList.size());
 			for (RoundTripFlightInfo in : flightList) {
 				System.out.println(in.getInfo().toString());
 				System.out.println(in.getDetail().toString());
 				System.out.println("");
 			}
+
+			// for (RoundTripFlightInfo round : flightList) {
+			// System.out.println("************" + round.toString());
+			// }
 		} else {
 			System.out.println(result.getStatus());
 		}
@@ -229,11 +232,11 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 				JSONArray tps = ojson.getJSONArray("tps");
 				List<FlightSegement> gosegs = new ArrayList<FlightSegement>(); // 去程
 				List<FlightSegement> resegs = new ArrayList<FlightSegement>(); // 返程
+				List<FlightSegement> goreSegs = new ArrayList<FlightSegement>();
 				for (int t = 0; t < tps.size(); t++) { // 0:去程 1:返程
 					JSONArray segmentArray = ((JSONObject) tps.get(t)).getJSONArray("segments");
 					// System.out.println("segments   " + segmentArray);
 					for (int j = 0; j < segmentArray.size(); j++) {
-
 						FlightSegement seg = new FlightSegement();
 						JSONObject object = (JSONObject) segmentArray.get(j);
 						String flightNo = object.getString("ac") + object.getString("fn"); // flightNo
@@ -249,7 +252,7 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 						seg.setArrairport(object.getString("ds")); // arrairport
 						seg.setCompany(object.getString("ac")); // company
 
-						if (t == 1) { // 去程
+						if (t == 0) { // 去程
 							gosegs.add(seg);
 						}
 						if (t == 1) { // 返程
@@ -269,11 +272,12 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 				flightDetail.setWrapperid(searchParam.getWrapperid());
 
 				rtFlight.setDetail(flightDetail); // detail
-				rtFlight.setInfo(gosegs); // 去程航班段
+				goreSegs.addAll(gosegs);
+				goreSegs.addAll(resegs);
+				rtFlight.setInfo(goreSegs); // 去程+返程 航班段
 				rtFlight.setRetdepdate(sdf.parse(searchParam.getRetDate())); // 返程日期
 				rtFlight.setRetflightno(flightRetNoList); // 返程航班号
 				rtFlight.setRetinfo(resegs); // 返程航班段
-
 				flightList.add(rtFlight);
 			}
 		} catch (Exception e) {// 解析失败
