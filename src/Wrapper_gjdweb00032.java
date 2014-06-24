@@ -136,7 +136,6 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 		try {
 			// 按照浏览器的模式来处理param
 			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-			get.setFollowRedirects(false);
 			get.getParams().setContentCharset("utf-8");
 			httpClient.executeMethod(get);
 

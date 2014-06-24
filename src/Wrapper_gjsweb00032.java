@@ -180,14 +180,14 @@ public class Wrapper_gjsweb00032 implements QunarCrawler {
 			// System.out.println(jsonStr);
 			if (StringUtils.isEmpty(jsonStr)) {
 				result.setRet(false);
-				result.setStatus(Constants.NO_RESULT);
+				result.setStatus(Constants.PARSING_FAIL);
 				return result;
 			}
 			JSONArray ajson = JSON.parseArray(jsonStr);
 			// System.out.println(ajson.size());
 			if (ajson == null || ajson.size() == 0) {
 				result.setRet(false);
-				result.setStatus(Constants.NO_RESULT);
+				result.setStatus(Constants.PARSING_FAIL);
 				return result;
 			}
 
