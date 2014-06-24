@@ -112,22 +112,9 @@ public class Wrapper_gjdweb00032 implements QunarCrawler {
 			QFHttpClient httpClient = new QFHttpClient(arg0, false);
 			// 获取年月日
 			String[] dateDep = arg0.getDepDate().split("-"); // [0]2014 [1]08 [2]01
-			String SearchFlightControl1 = URLEncoder.encode("../../", "utf-8");
-			String searchTemp = URLEncoder.encode("SearchFlightControl1$hdPath", "utf-8");
 			String date1 = dateDep[1] + "/" + dateDep[2] + "/" + dateDep[0];
 			String dateT = URLEncoder.encode(date1, "utf-8");
 			String dateAjax = dateDep[1] + dateDep[2] + dateDep[0];
-
-			// Expedia=on
-			// SearchFlightControl1$hdPath=../../
-			// adt=1
-			// cabin=e
-			// chd=0
-			// date1=06/25/2014
-			// date2=08/13/2014
-			// destination1=(BER) Berlin, Germany - All Airports
-			// origin1=(LUX) Luxembourg Airport - Luxembourg, Luxembourg
-			// type=oneway
 
 			String getUrl = String
 					.format("http://www.hop2.com/page/Flight/AirResultForm.aspx?type=oneway&origin1=%s&date1=%s&destination1=%s&date2=%s&adt=1&chd=0&cabin=e",
