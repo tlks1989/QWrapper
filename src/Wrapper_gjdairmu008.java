@@ -192,6 +192,7 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
 		String bookingUrlPre = "http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml";
+//		http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=OW&cond.depCode=MNL&cond.arrCode_reveal=Changsha&cond.arrCode=CSX&cond.routeType=3&depDate=2014-08-01&submit=Book+Now
 		
 		// 获取年月日
 		BookingResult bookingResult = new BookingResult();
@@ -201,6 +202,7 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("cond.tripType", "OW");
 		map.put("cond.depCode", arg0.getDep());
+		map.put("cond.arrCode_reveal", "");
 		map.put("cond.arrCode", arg0.getArr());
 		map.put("cond.routeType","3");
 		map.put("depDate", arg0.getDepDate());
