@@ -1,4 +1,3 @@
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.Format;
 import java.text.ParseException;
@@ -26,19 +25,19 @@ import com.qunar.qfwrapper.bean.search.FlightSearchParam;
 import com.qunar.qfwrapper.bean.search.FlightSegement;
 import com.qunar.qfwrapper.bean.search.OneWayFlightInfo;
 import com.qunar.qfwrapper.bean.search.ProcessResultInfo;
+import com.qunar.qfwrapper.bean.search.RoundTripFlightInfo;
 import com.qunar.qfwrapper.constants.Constants;
 import com.qunar.qfwrapper.interfaces.QunarCrawler;
 import com.qunar.qfwrapper.util.QFGetMethod;
 import com.qunar.qfwrapper.util.QFHttpClient;
 
-public class Wrapper_gjdairmu008 implements QunarCrawler {
+public class Wrapper_gjsairmu008 implements QunarCrawler {
 	// 无票
 	private static final String NO_TICKET = "We apologize that there are no sufficient seats on";
 
 	// 系统使用的货币单位
 	public static String CURRENCY = "USD";
 	private static Map cityMap = null;
-	private static Map cityMap2 = null;
 	static {
 		cityMap = new HashMap<String, String>() {
 			{
@@ -161,152 +160,40 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		};
 	}
 
-	static {
-		cityMap2 = new HashMap<String, String>() {
-			{
-				put("MNL", "MANILA");
-				put("PVG", "Shanghai Pu Dong Airport");
-				put("DAT", "Datong");
-				put("DIG", "Diqing Shangrila Airport");
-				put("HSN", "Zhoushan");
-				put("KMG", "Kunming ChangShui");
-				put("LHW", "Lanzhou Airport");
-				put("LXA", "Lhasa");
-				put("SYM", "Simao");
-				put("SZX", "Shenzhen");
-				put("WUX", "Wuxi");
-				put("XFN", "Xiangfan");
-				put("XNN", "Xining");
-				put("CGQ", "Changchun");
-				put("DLC", "Dalian");
-				put("HIA", "HUAIAN");
-				put("HRB", "Harbin");
-				put("NNG", "Nanning");
-				put("URC", "Urumqi");
-				put("WUA", "WuHai");
-				put("WUS", "Wuyishan");
-				put("HAK", "Haikou");
-				put("JGN", "Jiayuguan");
-				put("LYG", "Lianyungang");
-				put("SJW", "Shijiazhuang");
-				put("SWA", "Shantou");
-				put("SYX", "Sanya");
-				put("TSN", "Tianjin");
-				put("WUH", "Wuhan");
-				put("XIL", "Xilinhot");
-				put("ACX", "Xingyi Airport");
-				put("CGO", "Zhengzhou");
-				put("CIF", "Chifeng");
-				put("DYG", "Dayong");
-				put("HDG", "HANDAN");
-				put("JZH", "JIUZHAIGOU");
-				put("KWE", "Guiyang");
-				put("MDG", "Mudanjiang");
-				put("NKG", "Nanjing");
-				put("PEK", "Beijing Capital Airport");
-				put("TAO", "Qingdao");
-				put("TNA", "Jinan");
-				put("TYN", "Taiyuan");
-				put("UYN", "Yulin");
-				put("XIY", "Xi an Xianyang Airport");
-				put("YNT", "Yantai");
-				put("ZUH", "ZHUHAI JINWAN AIRPORT");
-				put("CTU", "Chengdu");
-				put("LDS", "Yichun lindu Airport");
-				put("LJG", "Lijiang City");
-				put("LZO", "Luzhou");
-				put("SZV", "Suzhou");
-				put("WEH", "Weihai");
-				put("CSX", "Changsha");
-				put("FOC", "Fuzhou");
-				put("HFE", "Hefei");
-				put("INC", "Yinchuan");
-				put("KHG", "Kashi");
-				put("KHN", "Nanchang");
-				put("LYI", "Linyi");
-				put("LZH", "Liuzhou");
-				put("NAO", "Nanchong");
-				put("SHP", "Qinhuangdao");
-				put("BHY", "Beihai");
-				put("CAN", "Guangzhou");
-				put("DNH", "Dunhuang");
-				put("HET", "Hohhot");
-				put("KWL", "Guilin");
-				put("WNZ", "Wenzhou");
-				put("CKG", "Chongqing");
-				put("ENY", "Yanan");
-				put("HYN", "Huangyan");
-				put("KOW", "Ganzhou");
-				put("LYA", "Luoyang");
-				put("SHE", "Shenyang");
-				put("XMN", "Xiamen");
-				put("YNJ", "Yanji");
-				put("JFK", "NEW YORK JOHN F KENNEDY");
-				put("MEL", "MELBOURNE");
-				put("SFO", "San Francisco");
-				put("SYD", "SYDNEY");
-				put("CDG", "PARIS");
-				put("NRT", "NARITA");
-				put("SIN", "SINGAPORE");
-				put("CJU", "CHEJU");
-				put("HNL", "HONOLULU");
-				put("NGO", "NAGOYA");
-				put("SVO", "Moscow");
-				put("FRA", "FRANKFURT");
-				put("KIX", "OSAKA");
-				put("LAX", "LOS ANGELES");
-				put("LHR", "LONDON");
-				put("OKJ", "OKAYAMA");
-				put("REP", "SIEM REAP");
-				put("TPE", "Taipei Taoyuan");
-				put("OKA", "OKINAWA");
-				put("SGN", "HO CHI MINH CITY");
-				put("DEL", "DELHI");
-				put("DXB", "DUBAI");
-				put("FCO", "Rome Fiumicino");
-				put("ICN", "SEOUL");
-				put("MFM", "MACAU");
-				put("BKK", "BANGKOK");
-				put("DPS", "DENPASAR");
-				put("FSZ", "SHIZUOKA");
-				put("FUK", "FUKUOKA");
-				put("PNH", "PHNOM PENH");
-				put("TSA", "Taipei Songshan");
-				put("YVR", "VANCOUVER");
-				put("HIJ", "HIROSHIMA");
-				put("HKG", "HONG KONG");
-				put("KUL", "KUALA LUMPUR");
-				put("CNS", "CAIRNS");
-				put("CTS", "CHITOSE");
-				put("MYJ", "MATSUYAMA");
-
-			}
-		};
-	}
-
 	// http://ph.ceair.com/ 中国东方航空
 
 	public static void main(String[] args) {
 		FlightSearchParam searchParam = new FlightSearchParam();
-		// searchParam.setDep("PTP"); //INVALID_DATE
-		// searchParam.setArr("STX");
-		// searchParam.setDepDate("2014-08-20");
 
+		// searchParam.setDep("MNL"); //INVALID_DATE
+		// searchParam.setArr("BHY");
+		// searchParam.setDepDate("2014-08-01");
+		// searchParam.setRetDate("2014-10-23");
 		searchParam.setDep("MNL");
 		searchParam.setArr("CSX");
+		searchParam.setDepDate("2014-08-01");
+		searchParam.setRetDate("2014-10-23");
+		// searchParam.setDep("MNL");
 		// searchParam.setArr("LAX");
-		searchParam.setDepDate("2014-09-22");
+		// searchParam.setDepDate("2014-08-01");
+		// searchParam.setRetDate("2014-08-27");
 		searchParam.setWrapperid("gjdairmu008");
 		searchParam.setTimeOut("60000");
 		searchParam.setToken("");
 
-		String html = new Wrapper_gjdairmu008().getHtml(searchParam);
+		String html = new Wrapper_gjsairmu008().getHtml(searchParam);
 		ProcessResultInfo result = new ProcessResultInfo();
-		result = new Wrapper_gjdairmu008().process(html, searchParam);
+		result = new Wrapper_gjsairmu008().process(html, searchParam);
 		if (result.isRet() && result.getStatus().equals(Constants.SUCCESS)) {
-			List<OneWayFlightInfo> flightList = (List<OneWayFlightInfo>) result.getData();
-			for (OneWayFlightInfo in : flightList) {
+			List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
+			System.out.println("+++++   " + flightList.size());
+			for (RoundTripFlightInfo in : flightList) {
+				System.out.println(in.getRetinfo().get(0).getDepDate());
+				System.out.println(in.getRetdepdate());
+
 				System.out.println(in.getInfo().toString());
+				System.out.println(in.getRetinfo().toString());
+				System.out.println(in.getRetflightno().toString());
 				System.out.println(in.getDetail().toString());
 				System.out.println("");
 			}
@@ -318,22 +205,28 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
 		String bookingUrlPre = "http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml";
+		// http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=RT&cond.depCode=MNL&cond.arrCode_reveal=Changsha&cond.arrCode=CSX&cond.routeType=3&depDate=2014-08-13&depRtDate=2014-08-27&cond.cabinRank=ECONOMY&submit=Search+%26+Book
+
+		// cond.arrCode=CSX
+		// cond.arrCode_reveal=Changsha
+		// cond.cabinRank=ECONOMY
+		// cond.depCode=MNL
+		// cond.routeType=3
+		// cond.tripType=RT
+		// depDate=2014-08-13
+		// depRtDate=2014-08-27
+		// submit=Search & Book
 		BookingResult bookingResult = new BookingResult();
 		BookingInfo bookingInfo = new BookingInfo();
 		bookingInfo.setAction(bookingUrlPre);
 		bookingInfo.setMethod("get");
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("cond.tripType", "OW");
+		map.put("cond.tripType", "RT");
 		map.put("cond.depCode", arg0.getDep());
-		try {
-			map.put("cond.arrCode_reveal", URLEncoder.encode((String) cityMap2.get(arg0.getArr()), "utf-8"));
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
 		map.put("cond.arrCode", arg0.getArr());
 		map.put("cond.routeType", "3");
 		map.put("depDate", arg0.getDepDate());
-		map.put("depRtDate", "");
+		map.put("depRtDate", arg0.getRetDate());
 		map.put("cond.cabinRank", "ECONOMY");
 		bookingInfo.setInputs(map);
 		bookingResult.setData(bookingInfo);
@@ -348,10 +241,20 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			QFHttpClient httpClient = new QFHttpClient(arg0, false);
 			// 按照浏览器的模式来处理cookie
 			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+
+			// cond.arrCode=LAX
+			// cond.arrCode_reveal=LOS ANGELES
+			// cond.depCode=MNL
+			// cond.routeType=4
+			// cond.tripType=RT
+			// depDate=2014-08-01
+			// depRtDate=2014-08-27
+			// submit=Book Now
+
 			String getUrl = String
-					.format("http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=OW&cond.depCode=%s&cond.arrCode=%s&cond.routeType=4&depDate=%s&submit=%s",
-							arg0.getDep(), arg0.getArr(), arg0.getDepDate(),
-							URLEncoder.encode("Search & Book", "utf-8"));
+					.format("http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=RT&cond.depCode=%s&cond.arrCode=%s&cond.routeType=4&depDate=%s&depRtDate=%s&submit=%s",
+							arg0.getDep(), arg0.getArr(), arg0.getDepDate(), arg0.getRetDate(),
+							URLEncoder.encode("Book Now", "utf-8"));
 			// System.out.println(getUrl);
 			get = new QFGetMethod(getUrl);
 			String urlGet = ""; // get请求的url
@@ -405,19 +308,48 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			// 去除所有空格换行等空白字符和引号
 			String cleanHtml = cleanHtml(html);
 
-			// 航班列表
-			List<OneWayFlightInfo> flightList = getFlightListFromHtml(searchParam, cleanHtml);
+			// true代表去程航班； false代表返程航班
+			// 去程航班列表
+			List<OneWayFlightInfo> flightList = getFlightListFromHtml(searchParam, cleanHtml, true);
+			// 返程航班列表
+			List<OneWayFlightInfo> reflightList = getFlightListFromHtml(searchParam, cleanHtml, false);
+			// System.out.println(flightList.size());
+			// System.out.println(reflightList.size());
 
 			// 没有结果
-			if (flightList == null || flightList.size() == 0) {
+			if (flightList == null || flightList.size() == 0 || reflightList == null || reflightList.size() == 0) {
 				result.setRet(false);
 				result.setStatus(Constants.NO_RESULT);
 				return result;
 			}
 
+			List<RoundTripFlightInfo> roundList = new ArrayList<RoundTripFlightInfo>(); // 往返列表
+			// 去返航班组合:笛卡尔积排列组合
+			for (OneWayFlightInfo out : flightList) {
+				for (OneWayFlightInfo in : reflightList) {
+
+					RoundTripFlightInfo roundInfo = new RoundTripFlightInfo();
+
+					FlightDetail detail = cloneDetail(out.getDetail());
+					detail.setPrice(detail.getPrice() + in.getDetail().getPrice());// 价格为来往的总价格
+
+					roundInfo.setDetail(detail);// detail
+					roundInfo.setInfo(cloneFlightSegementList(out.getInfo()));// 去程航班段
+					roundInfo.setOutboundPrice(out.getDetail().getPrice());// 去程价格
+
+					roundInfo.setRetdepdate(in.getDetail().getDepdate());// 返程日期
+					roundInfo.setRetflightno(in.getDetail().getFlightno()); // 返程航班号
+
+					roundInfo.setRetinfo(cloneFlightSegementList(in.getInfo()));// 返程航班段
+					roundInfo.setReturnedPrice(in.getDetail().getPrice());// 返程价格
+
+					roundList.add(roundInfo);
+				}
+			}
+
 			result.setRet(true);
 			result.setStatus(Constants.SUCCESS);
-			result.setData(flightList);
+			result.setData(roundList);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.setRet(false);
@@ -429,14 +361,15 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 
 	/**
 	 * 解析html，获取航班列表
+	 * true代表去程航班； false代表返程航班
 	 */
-	public List<OneWayFlightInfo> getFlightListFromHtml(FlightSearchParam searchParam, String cleanHtml)
-			throws Exception {
+	public List<OneWayFlightInfo> getFlightListFromHtml(FlightSearchParam searchParam, String cleanHtml,
+			boolean returnFlag) throws Exception {
 		// System.out.println("cleanHtml  " + cleanHtml);
 		// 航班列表
 		List<OneWayFlightInfo> flightList = new ArrayList<OneWayFlightInfo>();
 		// 从html字符串中提取各个航班的信息
-		String[] flightHtmlList = getFlightHtmlList(cleanHtml);
+		String[] flightHtmlList = getFlightHtmlList(cleanHtml, returnFlag);
 		// for (String f : flightHtmlList) {
 		// System.out.println(f);
 		// System.out.println("");
@@ -447,13 +380,13 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			OneWayFlightInfo info = new OneWayFlightInfo();
 
 			// 1.获取航班信息
-			FlightDetail detail = getFlightDetail(searchParam, flightHtml, info);
+			FlightDetail detail = getFlightDetail(searchParam, flightHtml, info, returnFlag);
 			if (detail == null) {// 未查找到价格 不处理此航班
 				continue;
 			}
 
 			// 2.航班飞行中转段列表
-			List<FlightSegement> segs = getFlightSegementList(searchParam, flightHtml);
+			List<FlightSegement> segs = getFlightSegementList(searchParam, flightHtml, returnFlag);
 
 			// 3.航班号，有可能一趟飞行要中转，每个中转都有可能是不同的航班号，所以用list
 			List<String> flightNoList = new ArrayList<String>();
@@ -474,9 +407,11 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 
 	/**
 	 * 获取航班的detail详情,【缺少航班号列表】
+	 * 
+	 * @param isOutBound - true代表去程航班； false代表返程航班
 	 */
-	private FlightDetail getFlightDetail(FlightSearchParam searchParam, String flightHtml, OneWayFlightInfo info)
-			throws Exception {
+	private FlightDetail getFlightDetail(FlightSearchParam searchParam, String flightHtml, OneWayFlightInfo info,
+			boolean isOutBound) throws Exception {
 		// 1.2航班信息
 		FlightDetail detail = new FlightDetail();
 
@@ -499,6 +434,9 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			// 票价 ￥32,800 $199.05
 			String priceStr = StringUtils.substringBetween(priceHtml, "<spanclass=tkt_amtstyle=display:none>",
 					"</span>");
+			if (StringUtils.isEmpty(priceStr)) {
+				continue;
+			}
 			// 税
 			String taxStr = StringUtils.substringBetween(priceHtml, "<spanclass=tax_amtstyle=display:none>", "</span>");
 			// 32800
@@ -524,9 +462,11 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		}
 		detail.setPrice(price);
 		detail.setTax(tax);
-		detail.setDepdate(getDate(searchParam.getDepDate()));
-		detail.setDepcity(searchParam.getDep());
-		detail.setArrcity(searchParam.getArr());
+
+		detail.setDepdate(getDate(isOutBound ? searchParam.getDepDate() : searchParam.getRetDate()));
+		detail.setDepcity(isOutBound ? searchParam.getDep() : searchParam.getArr());
+		detail.setArrcity(isOutBound ? searchParam.getArr() : searchParam.getDep());
+
 		detail.setWrapperid(searchParam.getWrapperid());
 		detail.setMonetaryunit(CURRENCY);
 
@@ -537,8 +477,8 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 	 * 航班的中转段列表
 	 * return List<FlightSegement>
 	 */
-	protected List<FlightSegement> getFlightSegementList(FlightSearchParam searchParam, String flightHtml)
-			throws Exception {
+	protected List<FlightSegement> getFlightSegementList(FlightSearchParam searchParam, String flightHtml,
+			boolean returnFlag) throws Exception {
 		List<FlightSegement> segs = new ArrayList<FlightSegement>();
 
 		// 航班列表
@@ -566,18 +506,16 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			// 出发
 			String departTime = StringUtils.substringBetween(segHtml,
 					"<td><imgsrc=/muovc/resource/images/icon_time_blue.gif/>", "</td>"); // 04:55Sep.22
-			String tDate = departTime.substring(5); // sep.22
-			String depDate = searchParam.getDepDate().split("-")[0] + "-" + month2No(tDate.substring(0, 3)) + "-"
-					+ tDate.substring(4);// 出发日期
-			seg.setDepDate(depDate);
+			seg.setDepDate(returnFlag ? searchParam.getDepDate() : searchParam.getRetDate());// 出发日期
+
 			seg.setDeptime(departTime.substring(0, 5));// 出发时间
 
 			// 到达
 			String arrTime = StringUtils.substringBetween(segHtml,
 					"<td><imgsrc=/muovc/resource/images/icon_time_red.gif/>", "</td>"); // 04:55Sep.22
 			String aDate = departTime.substring(5); // sep.22
-			String arrDate = searchParam.getDepDate().split("-")[0] + "-" + month2No(aDate.substring(0, 3)) + "-"
-					+ aDate.substring(4);// 到达日期
+			String year = returnFlag ? searchParam.getDepDate().split("-")[0] : searchParam.getRetDate().split("-")[0];
+			String arrDate = year + "-" + month2No(aDate.substring(0, 3)) + "-" + aDate.substring(4);// 到达日期
 			seg.setArrDate(arrDate);// 到达日期
 			seg.setArrtime(arrTime.substring(0, 5));// 到达时间
 
@@ -624,12 +562,14 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 
 	/**
 	 * 从html字符串中提取各个航班的信息
+	 * returnFlag true代表去程航班； false代表返程航班
 	 */
-	public String[] getFlightHtmlList(String cleanHtml) {
+	public String[] getFlightHtmlList(String cleanHtml, boolean returnFlag) {
 		// System.out.println(cleanHtml);
 		// 航班列表的开始标记
 		// <tablecellpadding=0cellspacing=1class=booking_table>
-		String listFlagBegin = "class=booking_table>";
+		// <tablecellpadding=0cellspacing=1class=bluerbooking_table>
+		String listFlagBegin = returnFlag ? "class=booking_table>" : "class=bluerbooking_table>";
 		// 航班列表的结束标记
 		String listFlagEnd = "</table>";
 		// 整个航班列表的html
@@ -698,5 +638,48 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			return "12";
 		}
 		return null;
+	}
+
+	/**
+	 * 克隆FlightDetail
+	 * 
+	 * @param oldDetail
+	 * @return
+	 */
+	public static FlightDetail cloneDetail(FlightDetail oldDetail) {
+		FlightDetail detail = new FlightDetail();
+		detail.setArrcity(oldDetail.getArrcity());
+		detail.setDepcity(oldDetail.getDepcity());
+		detail.setDepdate(oldDetail.getDepdate());
+		detail.setFlightno(oldDetail.getFlightno());
+		detail.setMonetaryunit(oldDetail.getMonetaryunit());
+		detail.setTax(oldDetail.getTax());
+		detail.setPrice(oldDetail.getPrice());
+		detail.setWrapperid(oldDetail.getWrapperid());
+
+		return detail;
+	}
+
+	/**
+	 * 克隆 List<FlightSegement>
+	 * 
+	 * @param segs
+	 * @return
+	 */
+	public static List<FlightSegement> cloneFlightSegementList(List<FlightSegement> segs) {
+
+		List<FlightSegement> segList = new ArrayList<FlightSegement>();
+		for (FlightSegement seg : segs) {
+			FlightSegement s = new FlightSegement();
+			s.setDepairport(seg.getDepairport());
+			s.setDepDate(seg.getDepDate());
+			s.setDeptime(seg.getDeptime());
+			s.setArrairport(seg.getArrairport());
+			s.setArrDate(seg.getArrDate());
+			s.setArrtime(seg.getArrtime());
+			s.setFlightno(seg.getFlightno());
+			segList.add(s);
+		}
+		return segList;
 	}
 }
