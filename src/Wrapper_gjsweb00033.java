@@ -7,9 +7,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.lang.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -124,6 +126,9 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 							URLEncoder.encode(date2, "utf-8"));
 
 			get = new QFGetMethod(getUrl);
+			String cookie = StringUtils.join(httpClient.getState().getCookies(),"; ");
+			httpClient.getState().clearCookies();
+			get.addRequestHeader("Cookie",cookie);
 			get.getParams().setContentCharset("utf-8");
 			int getStatus = httpClient.executeMethod(get);
 
@@ -132,7 +137,7 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 			}
 
 			while (true) {
-				String ranNum = getRandomNum();
+				String ranNum = getRandomNum();			
 				String ajaxUrl = String
 						.format("http://www.hop2.com/flight/results?type=roundtrip&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=%s&adt=1&chd=0&near=0000&airline=&nextkey=&_=%s",
 								arg0.getDep(), arg0.getArr(), date1Ajax, arg0.getArr(), arg0.getDep(), date2Ajax,
