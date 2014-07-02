@@ -1,5 +1,3 @@
-package demo.my03;
-
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
