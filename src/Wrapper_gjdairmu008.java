@@ -38,6 +38,7 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 	// 系统使用的货币单位
 	public static String CURRENCY = "USD";
 	private static Map cityMap = null;
+	private static Map cityMap2 = null;
 	static {
 		cityMap = new HashMap<String, String>() {
 			{
@@ -159,6 +160,128 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			}
 		};
 	}
+	static {
+		cityMap2 = new HashMap<String, String>() {
+			{
+				put("MNL", "MANILA");
+				put("PVG", "Shanghai Pu Dong Airport");
+				put("DAT", "Datong");
+				put("DIG", "Diqing Shangrila Airport");
+				put("HSN", "Zhoushan");
+				put("KMG", "Kunming ChangShui");
+				put("LHW", "Lanzhou Airport");
+				put("LXA", "Lhasa");
+				put("SYM", "Simao");
+				put("SZX", "Shenzhen");
+				put("WUX", "Wuxi");
+				put("XFN", "Xiangfan");
+				put("XNN", "Xining");
+				put("CGQ", "Changchun");
+				put("DLC", "Dalian");
+				put("HIA", "HUAIAN");
+				put("HRB", "Harbin");
+				put("NNG", "Nanning");
+				put("URC", "Urumqi");
+				put("WUA", "WuHai");
+				put("WUS", "Wuyishan");
+				put("HAK", "Haikou");
+				put("JGN", "Jiayuguan");
+				put("LYG", "Lianyungang");
+				put("SJW", "Shijiazhuang");
+				put("SWA", "Shantou");
+				put("SYX", "Sanya");
+				put("TSN", "Tianjin");
+				put("WUH", "Wuhan");
+				put("XIL", "Xilinhot");
+				put("ACX", "Xingyi Airport");
+				put("CGO", "Zhengzhou");
+				put("CIF", "Chifeng");
+				put("DYG", "Dayong");
+				put("HDG", "HANDAN");
+				put("JZH", "JIUZHAIGOU");
+				put("KWE", "Guiyang");
+				put("MDG", "Mudanjiang");
+				put("NKG", "Nanjing");
+				put("PEK", "Beijing Capital Airport");
+				put("TAO", "Qingdao");
+				put("TNA", "Jinan");
+				put("TYN", "Taiyuan");
+				put("UYN", "Yulin");
+				put("XIY", "Xi an Xianyang Airport");
+				put("YNT", "Yantai");
+				put("ZUH", "ZHUHAI JINWAN AIRPORT");
+				put("CTU", "Chengdu");
+				put("LDS", "Yichun lindu Airport");
+				put("LJG", "Lijiang City");
+				put("LZO", "Luzhou");
+				put("SZV", "Suzhou");
+				put("WEH", "Weihai");
+				put("CSX", "Changsha");
+				put("FOC", "Fuzhou");
+				put("HFE", "Hefei");
+				put("INC", "Yinchuan");
+				put("KHG", "Kashi");
+				put("KHN", "Nanchang");
+				put("LYI", "Linyi");
+				put("LZH", "Liuzhou");
+				put("NAO", "Nanchong");
+				put("SHP", "Qinhuangdao");
+				put("BHY", "Beihai");
+				put("CAN", "Guangzhou");
+				put("DNH", "Dunhuang");
+				put("HET", "Hohhot");
+				put("KWL", "Guilin");
+				put("WNZ", "Wenzhou");
+				put("CKG", "Chongqing");
+				put("ENY", "Yanan");
+				put("HYN", "Huangyan");
+				put("KOW", "Ganzhou");
+				put("LYA", "Luoyang");
+				put("SHE", "Shenyang");
+				put("XMN", "Xiamen");
+				put("YNJ", "Yanji");
+				put("JFK", "NEW YORK JOHN F KENNEDY");
+				put("MEL", "MELBOURNE");
+				put("SFO", "San Francisco");
+				put("SYD", "SYDNEY");
+				put("CDG", "PARIS");
+				put("NRT", "NARITA");
+				put("SIN", "SINGAPORE");
+				put("CJU", "CHEJU");
+				put("HNL", "HONOLULU");
+				put("NGO", "NAGOYA");
+				put("SVO", "Moscow");
+				put("FRA", "FRANKFURT");
+				put("KIX", "OSAKA");
+				put("LAX", "LOS ANGELES");
+				put("LHR", "LONDON");
+				put("OKJ", "OKAYAMA");
+				put("REP", "SIEM REAP");
+				put("TPE", "Taipei Taoyuan");
+				put("OKA", "OKINAWA");
+				put("SGN", "HO CHI MINH CITY");
+				put("DEL", "DELHI");
+				put("DXB", "DUBAI");
+				put("FCO", "Rome Fiumicino");
+				put("ICN", "SEOUL");
+				put("MFM", "MACAU");
+				put("BKK", "BANGKOK");
+				put("DPS", "DENPASAR");
+				put("FSZ", "SHIZUOKA");
+				put("FUK", "FUKUOKA");
+				put("PNH", "PHNOM PENH");
+				put("TSA", "Taipei Songshan");
+				put("YVR", "VANCOUVER");
+				put("HIJ", "HIROSHIMA");
+				put("HKG", "HONG KONG");
+				put("KUL", "KUALA LUMPUR");
+				put("CNS", "CAIRNS");
+				put("CTS", "CHITOSE");
+				put("MYJ", "MATSUYAMA");
+
+			}
+		};
+	}
 
 	// http://ph.ceair.com/ 中国东方航空
 
@@ -192,9 +315,8 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
 		String bookingUrlPre = "http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml";
-//		http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=OW&cond.depCode=MNL&cond.arrCode_reveal=Changsha&cond.arrCode=CSX&cond.routeType=3&depDate=2014-08-01&submit=Book+Now
-		
-		// 获取年月日
+		// http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=OW&cond.depCode=MNL&cond.arrCode_reveal=Changsha&cond.arrCode=CSX&cond.routeType=3&depDate=2014-08-01&submit=Book+Now
+
 		BookingResult bookingResult = new BookingResult();
 		BookingInfo bookingInfo = new BookingInfo();
 		bookingInfo.setAction(bookingUrlPre);
@@ -202,9 +324,13 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("cond.tripType", "OW");
 		map.put("cond.depCode", arg0.getDep());
-		map.put("cond.arrCode_reveal", "");
+		try {
+			map.put("cond.arrCode_reveal", URLEncoder.encode((String) cityMap2.get(arg0.getArr()), "utf-8"));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 		map.put("cond.arrCode", arg0.getArr());
-		map.put("cond.routeType","3");
+		map.put("cond.routeType", "3");
 		map.put("depDate", arg0.getDepDate());
 		try {
 			map.put("submit", URLEncoder.encode("Book Now", "utf-8"));
@@ -215,7 +341,7 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		bookingResult.setData(bookingInfo);
 		bookingResult.setRet(true);
 		return bookingResult;
-	
+
 	}
 
 	@Override
