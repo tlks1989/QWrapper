@@ -304,8 +304,9 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		if (result.isRet() && result.getStatus().equals(Constants.SUCCESS)) {
 			List<OneWayFlightInfo> flightList = (List<OneWayFlightInfo>) result.getData();
 			for (OneWayFlightInfo in : flightList) {
-				System.out.println("************" + in.getInfo().toString());
-				System.out.println("++++++++++++" + in.getDetail().toString());
+				System.out.println(in.getInfo().toString());
+				System.out.println(in.getDetail().toString());
+				System.out.println("");
 			}
 		} else {
 			System.out.println(result.getStatus());
@@ -315,7 +316,8 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
 		String bookingUrlPre = "http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml";
-		// http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=OW&cond.depCode=MNL&cond.arrCode_reveal=Changsha&cond.arrCode=CSX&cond.routeType=3&depDate=2014-08-01&submit=Book+Now
+		// http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?
+		// cond.tripType=OW&cond.depCode=MNL&cond.arrCode_reveal=Changsha&cond.arrCode=CSX&cond.routeType=3&depDate=2014-08-01&submit=Book+Now
 
 		BookingResult bookingResult = new BookingResult();
 		BookingInfo bookingInfo = new BookingInfo();
@@ -589,7 +591,7 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			// }
 
 			seg.setDepairport((String) cityMap.get(tdArray[3]));// 出发机场
-			System.out.println(tdArray[4]);
+			// System.out.println(tdArray[4]);
 			seg.setArrairport((String) cityMap.get(tdArray[4]));// 到达机场
 			segs.add(seg);
 		}
