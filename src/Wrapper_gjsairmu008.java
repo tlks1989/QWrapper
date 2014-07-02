@@ -189,6 +189,9 @@ public class Wrapper_gjsairmu008 implements QunarCrawler {
 			List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
 			System.out.println("+++++   " + flightList.size());
 			for (RoundTripFlightInfo in : flightList) {
+				System.out.println(in.getRetinfo().get(0).getDepDate());
+				System.out.println(in.getRetdepdate());
+
 				System.out.println(in.getInfo().toString());
 				System.out.println(in.getRetinfo().toString());
 				System.out.println(in.getRetflightno().toString());
@@ -311,10 +314,11 @@ public class Wrapper_gjsairmu008 implements QunarCrawler {
 			// 去除所有空格换行等空白字符和引号
 			String cleanHtml = cleanHtml(html);
 
+			// true代表去程航班； false代表返程航班
 			// 去程航班列表
-			List<OneWayFlightInfo> flightList = getFlightListFromHtml(searchParam, cleanHtml, false);
+			List<OneWayFlightInfo> flightList = getFlightListFromHtml(searchParam, cleanHtml, true);
 			// 返程航班列表
-			List<OneWayFlightInfo> reflightList = getFlightListFromHtml(searchParam, cleanHtml, true);
+			List<OneWayFlightInfo> reflightList = getFlightListFromHtml(searchParam, cleanHtml, false);
 			// System.out.println(flightList.size());
 			// System.out.println(reflightList.size());
 
@@ -338,8 +342,10 @@ public class Wrapper_gjsairmu008 implements QunarCrawler {
 					roundInfo.setDetail(detail);// detail
 					roundInfo.setInfo(cloneFlightSegementList(out.getInfo()));// 去程航班段
 					roundInfo.setOutboundPrice(out.getDetail().getPrice());// 去程价格
+
 					roundInfo.setRetdepdate(in.getDetail().getDepdate());// 返程日期
 					roundInfo.setRetflightno(in.getDetail().getFlightno()); // 返程航班号
+
 					roundInfo.setRetinfo(cloneFlightSegementList(in.getInfo()));// 返程航班段
 					roundInfo.setReturnedPrice(in.getDetail().getPrice());// 返程价格
 
@@ -361,6 +367,7 @@ public class Wrapper_gjsairmu008 implements QunarCrawler {
 
 	/**
 	 * 解析html，获取航班列表
+	 * true代表去程航班； false代表返程航班
 	 */
 	public List<OneWayFlightInfo> getFlightListFromHtml(FlightSearchParam searchParam, String cleanHtml,
 			boolean returnFlag) throws Exception {
@@ -379,7 +386,7 @@ public class Wrapper_gjsairmu008 implements QunarCrawler {
 			OneWayFlightInfo info = new OneWayFlightInfo();
 
 			// 1.获取航班信息
-			FlightDetail detail = getFlightDetail(searchParam, flightHtml, info);
+			FlightDetail detail = getFlightDetail(searchParam, flightHtml, info, returnFlag);
 			if (detail == null) {// 未查找到价格 不处理此航班
 				continue;
 			}
@@ -406,9 +413,11 @@ public class Wrapper_gjsairmu008 implements QunarCrawler {
 
 	/**
 	 * 获取航班的detail详情,【缺少航班号列表】
+	 * 
+	 * @param isOutBound - true代表去程航班； false代表返程航班
 	 */
-	private FlightDetail getFlightDetail(FlightSearchParam searchParam, String flightHtml, OneWayFlightInfo info)
-			throws Exception {
+	private FlightDetail getFlightDetail(FlightSearchParam searchParam, String flightHtml, OneWayFlightInfo info,
+			boolean isOutBound) throws Exception {
 		// 1.2航班信息
 		FlightDetail detail = new FlightDetail();
 
@@ -459,9 +468,11 @@ public class Wrapper_gjsairmu008 implements QunarCrawler {
 		}
 		detail.setPrice(price);
 		detail.setTax(tax);
-		detail.setDepdate(getDate(searchParam.getDepDate()));
-		detail.setDepcity(searchParam.getDep());
-		detail.setArrcity(searchParam.getArr());
+
+		detail.setDepdate(getDate(isOutBound ? searchParam.getDepDate() : searchParam.getRetDate()));
+		detail.setDepcity(isOutBound ? searchParam.getDep() : searchParam.getArr());
+		detail.setArrcity(isOutBound ? searchParam.getArr() : searchParam.getDep());
+
 		detail.setWrapperid(searchParam.getWrapperid());
 		detail.setMonetaryunit(CURRENCY);
 
@@ -559,14 +570,14 @@ public class Wrapper_gjsairmu008 implements QunarCrawler {
 
 	/**
 	 * 从html字符串中提取各个航班的信息
-	 * returnFlag false：去程----- true:返程
+	 * returnFlag true代表去程航班； false代表返程航班
 	 */
 	public String[] getFlightHtmlList(String cleanHtml, boolean returnFlag) {
 		// System.out.println(cleanHtml);
 		// 航班列表的开始标记
 		// <tablecellpadding=0cellspacing=1class=booking_table>
 		// <tablecellpadding=0cellspacing=1class=bluerbooking_table>
-		String listFlagBegin = returnFlag ? "class=bluerbooking_table>" : "class=booking_table>";
+		String listFlagBegin = returnFlag ? "class=booking_table>" : "class=bluerbooking_table>";
 		// 航班列表的结束标记
 		String listFlagEnd = "</table>";
 		// 整个航班列表的html
