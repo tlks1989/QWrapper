@@ -317,7 +317,7 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
-		String bookingUrlPre = "http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml";
+		String bookingUrlPre = "http://ph.ceair.com/muovc/main/en_PH/flights/loading.html";
 		// http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?
 		// cond.tripType=OW&
 		// cond.depCode=MNL&
@@ -329,15 +329,15 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		// cond.cabinRank=ECONOMY&
 		// submit=Search+%26+Book
 
-		// cond.arrCode=CSX
-		// cond.arrCode_reveal=Changsha
-		// cond.cabinRank=ECONOMY
-		// cond.depCode=MNL
-		// cond.routeType=3
-		// cond.tripType=OW
-		// depDate=2014-09-22
-		// depRtDate=
-		// submit=Search & Book
+		// "cond.tripType":"OW",
+		// "cond.depCode":"MNL",
+		// "cond.arrCode_reveal":"Changsha",
+		// "cond.arrCode":"CSX",
+		// "cond.routeType":"3",
+		// "depDate":"2014-09-22",
+		// "depRtDate":"",
+		// "cond.cabinRank":"ECONOMY",
+		// "submit":"Search+%26+Book"
 
 		BookingResult bookingResult = new BookingResult();
 		BookingInfo bookingInfo = new BookingInfo();
@@ -376,7 +376,8 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 			String getUrl = String
 					.format("http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=OW&cond.depCode=%s&cond.arrCode=%s&cond.routeType=4&depDate=%s&submit=%s",
-							arg0.getDep(), arg0.getArr(), arg0.getDepDate(), URLEncoder.encode("Book Now", "utf-8"));
+							arg0.getDep(), arg0.getArr(), arg0.getDepDate(),
+							URLEncoder.encode("Search & Book", "utf-8"));
 			// System.out.println(getUrl);
 			get = new QFGetMethod(getUrl);
 			String urlGet = ""; // get请求的url
