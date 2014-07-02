@@ -293,7 +293,8 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		// searchParam.setDepDate("2014-08-20");
 
 		searchParam.setDep("MNL");
-		searchParam.setArr("LAX");
+		searchParam.setArr("CSX");
+		// searchParam.setArr("LAX");
 		searchParam.setDepDate("2014-09-22");
 		searchParam.setWrapperid("gjdairmu008");
 		searchParam.setTimeOut("60000");
@@ -317,14 +318,14 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 	@Override
 	public BookingResult getBookingInfo(FlightSearchParam arg0) {
 		String bookingUrlPre = "http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml";
-		// http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=OW&cond.depCode=MNL&cond.arrCode_reveal=LOS+ANGELES&cond.arrCode=LAX&cond.routeType=4&depDate=2014-08-12&depRtDate=&cond.cabinRank=ECONOMY&submit=Search+%26+Book
-		// cond.arrCode=LAX
-		// cond.arrCode_reveal=LOS ANGELES
+		// http://ph.ceair.com/muovc/front/reservation/flight-search!doFlightSearch.shtml?cond.tripType=OW&cond.depCode=MNL&cond.arrCode_reveal=Changsha&cond.arrCode=CSX&cond.routeType=3&depDate=2014-09-22&depRtDate=&cond.cabinRank=ECONOMY&submit=Search+%26+Book
+		// cond.arrCode=CSX
+		// cond.arrCode_reveal=Changsha
 		// cond.cabinRank=ECONOMY
 		// cond.depCode=MNL
-		// cond.routeType=4
+		// cond.routeType=3
 		// cond.tripType=OW
-		// depDate=2014-08-12
+		// depDate=2014-09-22
 		// depRtDate=
 		// submit=Search & Book
 
@@ -341,10 +342,12 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 		// e1.printStackTrace();
 		// }
 		map.put("cond.arrCode", arg0.getArr());
-		map.put("cond.routeType", "4");
+		map.put("cond.routeType", "3");
 		map.put("depDate", arg0.getDepDate());
+		map.put("cond.cabinRank", "ECONOMY");
+		map.put("depRtDate", "");
 		try {
-			map.put("submit", URLEncoder.encode("Book Now", "utf-8"));
+			map.put("submit", URLEncoder.encode("Search & Book", "utf-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
