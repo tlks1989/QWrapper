@@ -37,14 +37,10 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 		// searchParam.setDepDate("2014-08-20");
 
 		// BGI SDQ 2014-08-16
-//		searchParam.setDep("BGI");
-//		searchParam.setArr("SLU");
-//		searchParam.setDepDate("2014-08-01");
-//		searchParam.setRetDate("2014-08-20");
-		searchParam.setDep("HKG");
-		searchParam.setArr("SYD");
-		searchParam.setDepDate("2014-08-10");
-		searchParam.setRetDate("2014-08-13");
+		searchParam.setDep("BGI");
+		searchParam.setArr("SLU");
+		searchParam.setDepDate("2014-08-01");
+		searchParam.setRetDate("2014-08-20");
 		// searchParam.setDep("DOM"); // Dominica (DOM)
 		// searchParam.setArr("SVD"); // St. Vincent (SVD)
 		// searchParam.setDepDate("2014-08-12");
@@ -58,12 +54,16 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 		ProcessResultInfo result = new ProcessResultInfo();
 		result = new Wrapper_gjsweb00033().process(html, searchParam);
 		if (result.isRet() && result.getStatus().equals(Constants.SUCCESS)) {
-			List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
-			for (RoundTripFlightInfo in : flightList) {
-				System.out.println(in.getInfo().toString());
-				System.out.println(in.getDetail().toString());
-				System.out.println("");
-			}
+			// BookingResult book = new Wrapper_gjsweb00033().getBookingInfo(searchParam);
+			JSONObject jsonObject = (JSONObject) JSONObject.toJSON(result);
+			System.out.println(jsonObject.toJSONString());
+
+			// List<RoundTripFlightInfo> flightList = (List<RoundTripFlightInfo>) result.getData();
+			// for (RoundTripFlightInfo in : flightList) {
+			// System.out.println(in.getInfo().toString());
+			// System.out.println(in.getDetail().toString());
+			// System.out.println("");
+			// }
 
 			// for (RoundTripFlightInfo round : flightList) {
 			// System.out.println("************" + round.toString());
@@ -111,6 +111,7 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 			QFHttpClient httpClient = new QFHttpClient(arg0, false);
 			// 按照浏览器的模式来处理cookie
 			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+
 			// 获取年月日
 			String[] dateDep = arg0.getDepDate().split("-"); // [0]2014 [1]08 [2]01
 			String[] dateRet = arg0.getRetDate().split("-"); // [0]2014 [1]08 [2]20
@@ -125,24 +126,35 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 							arg0.getDep(), URLEncoder.encode(date1, "utf-8"), arg0.getArr(),
 							URLEncoder.encode(date2, "utf-8"));
 
+			// String cookie = StringUtils.join(httpClient.getState().getCookies(), "; ");
 			get = new QFGetMethod(getUrl);
-			String cookie = StringUtils.join(httpClient.getState().getCookies(),"; ");
-			httpClient.getState().clearCookies();
-			get.addRequestHeader("Cookie",cookie);
+			// httpClient.getState().clearCookies();
+			// get.addRequestHeader("Cookie", cookie);
+			get.addRequestHeader("Referer", "http://www.hop2.com/");
+			get.addRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+			get.addRequestHeader("Accept-Encoding", "gzip, deflate");
+			get.addRequestHeader("Accept-Language", "zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3");
+			get.addRequestHeader("Connection", "keep-alive");
+			get.addRequestHeader("Host", "www.hop2.com");
 			get.getParams().setContentCharset("utf-8");
+
 			int getStatus = httpClient.executeMethod(get);
 
 			if (getStatus != HttpStatus.SC_OK) {
 				return "Exception";
 			}
 
+			String cookie = StringUtils.join(httpClient.getState().getCookies(), "; ");
+			httpClient.getState().clearCookies();
 			while (true) {
-				String ranNum = getRandomNum();			
+				System.out.println("**********");
+				String ranNum = getRandomNum();
 				String ajaxUrl = String
 						.format("http://www.hop2.com/flight/results?type=roundtrip&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=%s&adt=1&chd=0&near=0000&airline=&nextkey=&_=%s",
 								arg0.getDep(), arg0.getArr(), date1Ajax, arg0.getArr(), arg0.getDep(), date2Ajax,
 								ranNum);
 				getAjax = new QFGetMethod(ajaxUrl);
+				getAjax.addRequestHeader("Cookie", cookie);
 				getAjax.getParams().setContentCharset("utf-8");
 				// getAjax.addRequestHeader("connection","keep-alive");
 
