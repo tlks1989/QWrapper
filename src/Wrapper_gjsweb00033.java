@@ -147,7 +147,7 @@ public class Wrapper_gjsweb00033 implements QunarCrawler {
 			String cookie = StringUtils.join(httpClient.getState().getCookies(), "; ");
 			httpClient.getState().clearCookies();
 			while (true) {
-				System.out.println("**********");
+				// System.out.println("**********");
 				String ranNum = getRandomNum();
 				String ajaxUrl = String
 						.format("http://www.hop2.com/flight/results?type=roundtrip&cabin=E&origin1=%s&destination1=%s&date1=%s&origin2=%s&destination2=%s&date2=%s&adt=1&chd=0&near=0000&airline=&nextkey=&_=%s",
