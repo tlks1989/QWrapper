@@ -236,6 +236,11 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 			post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			post.setRequestHeader("Host", "wftc3.e-travel.com");
 			post.setRequestHeader("Referer", "http://us.aircalin.com/billet-noumea.php?cc=USA");
+			
+			String cookie = StringUtils.join(httpClient.getState().getCookies(),"; ");
+			httpClient.getState().clearCookies();
+			post.addRequestHeader("Cookie",cookie);
+			
 			int postStatus = httpClient.executeMethod(post);
 			if (postStatus != HttpStatus.SC_OK) {
 				return "Exception";
@@ -484,52 +489,60 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 		}
 		// 去除所有空格换行等空白字符和引号
 		String cleanHtml = cleanHtml(html);
-		// System.out.println(cleanHtml);
+//		 System.out.println(cleanHtml);
 
 		List<FlightSegement> segs = new ArrayList<FlightSegement>();
 
+		String[] fSegs = null;
 		// 航班列表
-		String[] fSegs = StringUtils.substringsBetween(cleanHtml, "<tr><td><b>segment", "<br/></td></tr>");
-		for (int t = 0; t < fSegs.length; t++) {
-			// departureCode_0_0value=LAX/>
-			String depPort = StringUtils.substringBetween(cleanHtml, "departureCode_0_" + t + "value=", "/>");
-			// arrivalCode_0_0value=AKL/>
-			String arrPort = StringUtils.substringBetween(cleanHtml, "arrivalCode_0_" + t + "value=", "/>");
-
-			// company airlineCode_0_0value=NZ/>
-			String company = StringUtils.substringBetween(cleanHtml, "airlineCode_0_" + t + "value=", "/>"); // company
-			// flightNumber_0_0value=5/> // LIAT
-			String flightNo = StringUtils.substringBetween(cleanHtml, "flightNumber_0_" + t + "value=", "/>"); // 370
-
-			FlightSegement seg = new FlightSegement();
-			seg.setCompany(company); // company
-			seg.setFlightno(company + flightNo);// flightNo
-
-			// 出发
-			// TueSep3007:30:00GMT2014
-			String departTime = StringUtils.substringBetween(cleanHtml, "departureDate_0_" + t + "value=", "/>");
-			String tDate = departTime.substring(3, 8); // sep22
-			String depDate = departTime.substring(19) + "-" + month2No(tDate.substring(0, 3)) + "-"
-					+ tDate.substring(3);// 出发日期
-			seg.setDepDate(depDate);
-			seg.setDeptime(departTime.substring(8, 13));// 出发时间
-
-			// System.out.println(depDate + " " + departTime.substring(8, 13));
-			// 到达
-			// 到达时间 arrivalDate_0_0value=TueSep3007:30:00GMT2014/>
-			String arrTime = StringUtils.substringBetween(cleanHtml, "arrivalDate_0_" + t + "value=", "/>");
-			String aDate = arrTime.substring(3, 8); // sep22
-			String arrDate = arrTime.substring(19) + "-" + month2No(aDate.substring(0, 3)) + "-" + aDate.substring(3);// 到达日期
-			seg.setArrDate(arrDate);// 到达日期
-			seg.setArrtime(arrTime.substring(8, 13));// 到达时间
-			// System.out.println(arrDate + " " + arrTime.substring(8, 13));
-
-			seg.setDepairport(depPort);// 出发机场
-			seg.setArrairport(arrPort);// 到达机场
-			// System.out.println(depPort);
-			// System.out.println(arrPort);
-
-			segs.add(seg);
+		if(StringUtils.isNotEmpty(cleanHtml)){
+			fSegs = StringUtils.substringsBetween(cleanHtml, "<tr><td><b>segment", "<br/></td></tr>");
+		}
+//		for(String s : fSegs){
+//			System.out.println(s);
+//		}
+		if(fSegs!=null && fSegs.length>0){
+			for (int t = 0; t < fSegs.length; t++) {
+				// departureCode_0_0value=LAX/>
+				String depPort = StringUtils.substringBetween(cleanHtml, "departureCode_0_" + t + "value=", "/>");
+				// arrivalCode_0_0value=AKL/>
+				String arrPort = StringUtils.substringBetween(cleanHtml, "arrivalCode_0_" + t + "value=", "/>");
+				
+				// company airlineCode_0_0value=NZ/>
+				String company = StringUtils.substringBetween(cleanHtml, "airlineCode_0_" + t + "value=", "/>"); // company
+				// flightNumber_0_0value=5/> // LIAT
+				String flightNo = StringUtils.substringBetween(cleanHtml, "flightNumber_0_" + t + "value=", "/>"); // 370
+				
+				FlightSegement seg = new FlightSegement();
+				seg.setCompany(company); // company
+				seg.setFlightno(company + flightNo);// flightNo
+				
+				// 出发
+				// TueSep3007:30:00GMT2014
+				String departTime = StringUtils.substringBetween(cleanHtml, "departureDate_0_" + t + "value=", "/>");
+				String tDate = departTime.substring(3, 8); // sep22
+				String depDate = departTime.substring(19) + "-" + month2No(tDate.substring(0, 3)) + "-"
+						+ tDate.substring(3);// 出发日期
+				seg.setDepDate(depDate);
+				seg.setDeptime(departTime.substring(8, 13));// 出发时间
+				
+				// System.out.println(depDate + " " + departTime.substring(8, 13));
+				// 到达
+				// 到达时间 arrivalDate_0_0value=TueSep3007:30:00GMT2014/>
+				String arrTime = StringUtils.substringBetween(cleanHtml, "arrivalDate_0_" + t + "value=", "/>");
+				String aDate = arrTime.substring(3, 8); // sep22
+				String arrDate = arrTime.substring(19) + "-" + month2No(aDate.substring(0, 3)) + "-" + aDate.substring(3);// 到达日期
+				seg.setArrDate(arrDate);// 到达日期
+				seg.setArrtime(arrTime.substring(8, 13));// 到达时间
+				// System.out.println(arrDate + " " + arrTime.substring(8, 13));
+				
+				seg.setDepairport(depPort);// 出发机场
+				seg.setArrairport(arrPort);// 到达机场
+				// System.out.println(depPort);
+				// System.out.println(arrPort);
+				
+				segs.add(seg);
+			}
 		}
 		// System.out.println("");
 		return segs;
@@ -635,23 +648,6 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 		// 删除最后一个无效的内容
 		return (String[]) ArrayUtils.remove(flightList, flightList.length - 1);
 
-	}
-
-	/**
-	 * 把12小时制的时间转化成24小时制的时间
-	 */
-	public static String get24Time(String time) {
-		if (StringUtils.isEmpty(time)) {
-			return null;
-		}
-		try {
-			Format f12 = new SimpleDateFormat("hh:mma", Locale.ENGLISH);
-			Format f24 = new SimpleDateFormat("HH:mm");
-			return f24.format(f12.parseObject(time));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	/**
