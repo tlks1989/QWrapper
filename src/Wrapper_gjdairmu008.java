@@ -683,8 +683,8 @@ public class Wrapper_gjdairmu008 implements QunarCrawler {
 			// System.out.println(t);
 			// }
 
-			System.out.println(cityMap.get(tdArray[3]));
-			System.out.println(cityMap.get(tdArray[4]));
+			// System.out.println(cityMap.get(tdArray[3]));
+			// System.out.println(cityMap.get(tdArray[4]));
 			// System.out.println("************");
 			seg.setDepairport((String) cityMap.get(tdArray[3]));// 出发机场
 			// System.out.println(tdArray[4]);
