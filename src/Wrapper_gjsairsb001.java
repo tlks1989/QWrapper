@@ -485,6 +485,7 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 	 */
 	protected List<FlightSegement> getFlightSegementList(FlightSearchParam searchParam, String flightHtml,
 			String sessionId, boolean returnFlag) throws Exception {
+		List<FlightSegement> segs = new ArrayList<FlightSegement>();
 
 		String html = getSegmentHtml(searchParam, sessionId, flightHtml, returnFlag); // 二次请求
 		if (StringUtils.isEmpty(html) || "Exception".equals(html)) {
@@ -498,8 +499,6 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 		// System.out.println("");
 		// }
 		// System.out.println(cleanHtmlSecond);
-
-		List<FlightSegement> segs = new ArrayList<FlightSegement>();
 
 		// 航班列表
 		String[] fSegs = StringUtils.substringsBetween(cleanHtmlSecond, "<tr><td><b>segmentinformation",
@@ -576,6 +575,8 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 			// flightId = "0";
 			// }
 			QFHttpClient httpClient = new QFHttpClient(arg0, false);
+			// 按照浏览器的模式来处理cookie
+			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 			String getUrl = null;
 			if (returnFlag) {
 				getUrl = "http://wftc3.e-travel.com/plnext/FPCaircalin/FlexPricerFlightDetailsPopUp.action;jsessionid="
