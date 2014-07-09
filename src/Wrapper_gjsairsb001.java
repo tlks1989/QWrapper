@@ -673,7 +673,6 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 		// }
 		// 删除最后一个无效的内容
 		return (String[]) ArrayUtils.remove(flightList, flightList.length - 1);
-
 	}
 
 	/**
@@ -768,7 +767,6 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 	 * @return
 	 */
 	public static List<FlightSegement> cloneFlightSegementList(List<FlightSegement> segs) {
-
 		List<FlightSegement> segList = new ArrayList<FlightSegement>();
 		for (FlightSegement seg : segs) {
 			FlightSegement s = new FlightSegement();
