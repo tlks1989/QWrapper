@@ -351,8 +351,8 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 			List<OneWayFlightInfo> flightList = getFlightListFromHtml(searchParam, cleanHtml, true);
 			// 返程航班列表
 			List<OneWayFlightInfo> reflightList = getFlightListFromHtml(searchParam, cleanHtml, false);
-			System.out.println("flightList.size() ***  " + flightList.size());
-			System.out.println("reflightList.size() *** " + reflightList.size());
+			// System.out.println("flightList.size() ***  " + flightList.size());
+			// System.out.println("reflightList.size() *** " + reflightList.size());
 
 			// 没有结果
 			if (flightList == null || flightList.size() == 0 || reflightList == null || reflightList.size() == 0) {
@@ -500,10 +500,10 @@ public class Wrapper_gjsairsb001 implements QunarCrawler {
 		// 去除所有空格换行等空白字符和引号
 		String cleanHtmlSecond = cleanHtml(html);
 
-		if (!returnFlag) {
-			System.out.println("");
-			System.out.println(cleanHtmlSecond);
-		}
+		// if (!returnFlag) {
+		// System.out.println("");
+		// System.out.println(cleanHtmlSecond);
+		// }
 
 		// 航班列表
 		String[] fSegs = StringUtils.substringsBetween(cleanHtmlSecond, "<tr><td><b>segment", "<br/></td></tr>");
